@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SIRDIO STUDIO V7 - ABBEY ROAD FINAL</title>
+<script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
+<style>
+:root{--gold:#d4af37;--bg:#0a0a0f;--card:#15151c}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:#fff;font-family:system-ui}
+header{padding:10px 14px;border-bottom:3px solid var(--gold);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:var(--bg);z-index:10}
+.badge{padding:4px 10px;border-radius:20px;font-weight:800;font-size:12px;background:#222;border:1px solid #444}
+.badge.live{background:#111;border-color:var(--gold);color:var(--gold)}
+.vu{display:flex;gap:2px;height:38px;background:#000;padding:3px;border-bottom:1px solid #222}
+.bar{flex:1;background:var(--gold);height:10%;transition:height 0.08s}
+.card{margin:10px;padding:14px;background:var(--card);border:1px solid #333;border-radius:14px}
+.card.gold{border-color:var(--gold);background:linear-gradient(135deg,#1a1a1a,#2a2110)}
+h3{margin:0 0 8px;color:var(--gold);font-size:13px;letter-spacing:1px}
+button{padding:10px 14px;border-radius:10px;border:1px solid #555;background:#222;color:#fff;font-weight:700;margin:4px}
+button.gold{background:var(--gold);color:#000;border-color:var(--gold)}
+button.active{background:var(--gold);color:#000}
+#playlist div{padding:8px;border-bottom:1px solid #222;display:flex;justify-content:space-between}
+#playlist div.playing{color:var(--gold);background:#201a0a}
+.small{font-size:11px;color:#888}
+#nowBar{position:fixed;bottom:0;left:0;right:0;background:#111;border-top:2px solid var(--gold);padding:8px 12px;display:flex;justify-content:space-between}
+</style></head><body>
+<header><div>🎙️ <b>SIRDIO V7</b> <span style="color:var(--gold)">ABBEY ROAD</span></div><div><span id="conn" class="badge">🟡 Connecting...</span> 👥<b id="lc">1</b></div></header>
+<div class="vu" id="vu"></div>
+<div class="card gold">
+<h3>🎛️ ABBEY ROAD CHAIN</h3>
+<div style="display:flex;gap:6px;flex-wrap:wrap">
+<button id="abbeyBtn" onclick="toggleAbbey()">✨ WARM: ON</button>
+<button id="micBtn" onclick="toggleMic()">🎤 MIC OFF</button>
+<button onclick="toggleMonitor()">🎧 MONITOR</button>
+</div>
+<div class="small">Use headphones - hear yourself silky!</div>
+</div>
+<div class="card">
+<h3>🎵 AUDIO PLAYER</h3>
+<audio id="audio" controls style="width:100%"></audio>
+<div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap">
+<button class="gold" onclick="document.getElementById('file').click()">📁 ADD MP3</button>
+<input id="file" type="file" accept="audio/*" multiple style="display:none" onchange="addFiles(this.files)">
+<button onclick="prev()">⏮️ PREV</button><button onclick="togglePlay()" id="playBtn">⏯️ PLAY</button><button onclick="next()">⏭️ NEXT</button>
+</div>
+<div class="small" id="cur">No song - ADD MP3</div>
+<div id="playlist"></div>
+</div>
+<div class="card" id="guestCard" style="display:none;border-color:#ff4444">
+<h3>🔴 GUEST REQUEST!</h3>
+<div id="guestName"></div>
+<div style="margin-top:8px"><button class="gold" onclick="acceptGuest()">✅ ACCEPT</button><button onclick="declineGuest()">❌ DECLINE</button></div>
+</div>
+<div style="height:80px"></div>
+<div id="nowBar"><div>🎵 <span id="now">No track</span></div><div class="small" id="nowStatus">Offline</div></div>
+<script>
+let playlist=[],curIdx=0,audio=document.getElementById('audio');
+let vu=document.getElementById('vu');for(let i=0;i<22;i++){let d=document.createElement('div');d.className='bar';vu.appendChild(d);}
+setInterval(()=>{let a=audio&&!audio.paused?70:15;for(let b of vu.children)b.style.height=(Math.random()*a+5)+'%';},90);
+function renderPL(){let h='';playlist.forEach((t,i)=>{h+=`<div class="${i==curIdx?'playing':''}" onclick="playIdx(${i})"><span>${i==curIdx?'▶ ':''}${t.name}</span><span onclick="event.stopPropagation();playlist.splice(i,1);renderPL()" style="color:#f44">✕</span></div>`});document.getElementById('playlist').innerHTML=h||'<div class="small">No songs</div>';}
+function addFiles(files){for(let f of files){playlist.push({name:f.name,url:URL.createObjectURL(f)});}renderPL();if(!audio.src)playIdx(0);}
+function playIdx(i){if(!playlist[i])return;curIdx=i;audio.src=playlist[i].url;audio.play();document.getElementById('cur').textContent='Playing: '+playlist[i].name;document.getElementById('now').textContent=playlist[i].name;renderPL();if(client&&client.connected)client.publish('sirdio/host/nowplaying',playlist[i].name);}
+function next(){if(!playlist.length)return;curIdx=(curIdx+1)%playlist.length;playIdx(curIdx);}function prev(){if(!playlist.length)return;curIdx=(curIdx-1+playlist.length)%playlist.length;playIdx(curIdx);}function togglePlay(){if(audio.paused)audio.play();else audio.pause();}
+audio.onended=next;
+let audioCtx,sourceMic,inputGain,tapeSat,silk,glue,outputGain,micStream=null,abbeyOn=true,monitorOn=true;
+function ensureCtx(){if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();}
+function makeSat(a){let k=a*6,n=44100,c=new Float32Array(n);for(let i=0;i<n;i++){let x=i*2/n-1;c[i]=(3+k)*x*20*Math.PI/180/(Math.PI+k*Math.abs(x));}return c;}
+function buildChain(){ensureCtx();inputGain=audioCtx.createGain();tapeSat=audioCtx.createWaveShaper();silk=audioCtx.createBiquadFilter();glue=audioCtx.createDynamicsCompressor();outputGain=audioCtx.createGain();inputGain.gain.value=1.15;tapeSat.curve=makeSat(0.35);tapeSat.oversample='4x';silk.type='lowpass';silk.frequency.value=10800;glue.threshold.value=-20;glue.ratio.value=4.5;glue.attack.value=0.025;glue.release.value=0.32;outputGain.gain.value=monitorOn?1.1:0;try{inputGain.connect(tapeSat);tapeSat.connect(silk);silk.connect(glue);glue.connect(outputGain);outputGain.connect(audioCtx.destination);}catch(e){}}
+function toggleAbbey(){abbeyOn=!abbeyOn;document.getElementById('abbeyBtn').textContent=abbeyOn?'✨ WARM: ON':'WARM: OFF';try{if(outputGain)outputGain.gain.value=abbeyOn&&monitorOn?1.1:0;}catch(e){}}
+function toggleMonitor(){monitorOn=!monitorOn;try{if(outputGain)outputGain.gain.value=monitorOn&&abbeyOn?1.1:0;}catch(e){}}
+async function toggleMic(){let b=document.getElementById('micBtn');if(micStream){micStream.getTracks().forEach(t=>t.stop());micStream=null;try{sourceMic.disconnect();}catch(e){}b.textContent='🎤 MIC OFF';b.classList.remove('active');return;}try{ensureCtx();buildChain();micStream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:false,autoGainControl:false,noiseSuppression:false}});sourceMic=audioCtx.createMediaStreamSource(micStream);sourceMic.connect(inputGain);if(audioCtx.state==='suspended')await audioCtx.resume();b.textContent='🔴 MIC ON - ABBEY';b.classList.add('active');}catch(e){alert('Mic: '+e.message);}}
+let brokers=['wss://broker.hivemq.com:8884/mqtt','wss://broker.emqx.io:8084/mqtt','wss://broker.hivemq.com:8000/mqtt'],bIdx=0,client=null,pendingGuest=null;
+function tryConn(){if(bIdx>=brokers.length){document.getElementById('conn').textContent='🔴 Offline';document.getElementById('nowStatus').textContent='Offline - music still local';return;}let url=brokers[bIdx];document.getElementById('conn').textContent='🟡 '+url.split('/')[2];let c=mqtt.connect(url,{keepalive:25,connectTimeout:4000,clean:true});let to=setTimeout(()=>{try{c.end();}catch(e){}bIdx++;tryConn();},6000);c.on('connect',()=>{clearTimeout(to);client=c;document.getElementById('conn').textContent='🟢 CONNECTED ('+url.split('/')[2]+')';document.getElementById('conn').className='badge live';document.getElementById('nowStatus').textContent='🟢 LIVE';c.subscribe('sirdio/guest/request');c.subscribe('sirdio/listener/join');if(playlist[curIdx])c.publish('sirdio/host/nowplaying',playlist[curIdx].name);c.on('message',(t,m)=>{let msg=m.toString();if(t.includes('guest/request')){pendingGuest=msg;document.getElementById('guestName').textContent='🎤 '+msg+' wants to talk!';document.getElementById('guestCard').style.display='block';}if(t.includes('listener/join')){let el=document.getElementById('lc');el.textContent=parseInt(el.textContent)+1;}});});c.on('error',()=>{clearTimeout(to);bIdx++;tryConn();});c.on('close',()=>{if(!client||!client.connected){clearTimeout(to);bIdx=(bIdx+1)%brokers.length;setTimeout(tryConn,2000);}});}tryConn();setInterval(()=>{if(client&&!client.connected){bIdx=0;tryConn();}},15000);
+function acceptGuest(){if(client)client.publish('sirdio/host/guest','YES');document.getElementById('guestCard').style.display='none';}
+function declineGuest(){if(client)client.publish('sirdio/host/guest','NO');document.getElementById('guestCard').style.display='none';}
+</script></body></html>
