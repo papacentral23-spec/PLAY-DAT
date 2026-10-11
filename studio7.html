@@ -1,0 +1,24 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>STUDIO 7 - PLAY DAT</title>
+<style>body{background:#111;color:#fff;font-family:system-ui;padding:16px;text-align:center} .knob{width:120px;height:120px;background:radial-gradient(#fff8dc,#a99a6a);border-radius:50%;margin:20px auto;display:flex;align-items:center;justify-content:center;color:#000;font-weight:900;font-size:40px;box-shadow:0 0 30px #ffcc0033} button{padding:16px 24px;border:none;border-radius:12px;font-weight:900;width:100%;margin:8px 0;cursor:pointer} .live{background:#ffcc00;color:#000} .back{background:#222;color:#fff;border:1px solid #333}</style></head><body>
+<h1>🎛️ STUDIO 7</h1><p style="color:#888">Abbey Road ONE KNOB • Master Gain</p>
+<div class="knob">I</div><h2>75%</h2><p style="color:#00ff99">∞ UNLIMITED LISTENERS</p>
+<button class="live" onclick="goLive()">● GO LIVE - START BROADCAST</button>
+<button class="back" onclick="location.href='index.html'">← BACK TO RADIO</button>
+<p id="status" style="color:#666;margin-top:16px">Status: Ready - Tap GO LIVE</p>
+<script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
+<script>
+let peer, call;
+function goLive(){
+ document.getElementById('status').innerText='Starting Mic... Allow mic permission!';
+ navigator.mediaDevices.getUserMedia({audio:true}).then(stream=>{
+   peer=new Peer('playdat-studio-papa');
+   peer.on('open',()=>{document.getElementById('status').innerText='🔴 LIVE NOW! Broadcasting to UNLIMITED listeners at 23-spec.github.io';});
+   peer.on('connection',c=>{c.on('open',()=>{peer.call(c.peer,stream);});});
+   peer.on('call',c=>{c.answer(stream);});
+   // Auto answer guests
+   peer.on('connection',conn=>{
+     conn.on('data',d=>{console.log(d)});
+   });
+ }).catch(e=>{document.getElementById('status').innerText='Mic error: '+e.message});
+}
+</script></body></html>
