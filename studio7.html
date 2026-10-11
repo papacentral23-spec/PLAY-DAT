@@ -1,0 +1,84 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>PLAY DAT - ∞ UNLIMITED</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#080808;color:#fff;font-family:system-ui;padding:12px;text-align:center}
+h1{color:#00ff88;margin:8px 0 2px;font-size:28px}p.sub{color:#666;margin:0 0 12px}
+.card{background:#151515;border:1px solid #2a2a2a;border-radius:20px;padding:16px;max-width:440px;margin:0 auto}
+.knob{width:150px;height:150px;border-radius:50%;margin:12px auto;background:conic-gradient(#00ff88 75%,#222 0);display:flex;align-items:center;justify-content:center;font-size:36px;font-weight:900;box-shadow:0 0 40px #00ff8833;border:4px solid #222}
+audio{width:100%;margin:12px 0;border-radius:10px}.now{color:#00ff88;font-weight:700;margin:8px}
+.btn{width:100%;padding:16px;border:none;border-radius:14px;font-weight:900;font-size:16px;margin:6px 0}
+.btn-add{background:#00ff88;color:#000}.btn-live{background:#111;color:#00ff88;border:2px solid #00ff88}
+.song{background:#1e1e1e;padding:12px;border-radius:10px;margin:6px 0;text-align:left;border-left:4px solid #00ff88;display:flex;justify-content:space-between;align-items:center}
+.song b{font-size:14px}.del{color:#ff4444;font-size:20px;padding:0 8px}
+.bottom{position:fixed;bottom:0;left:0;right:0;background:#111;border-top:1px solid #222;display:flex;justify-content:space-around;padding:10px}
+.bottom a{color:#666;text-decoration:none;font-size:12px;font-weight:700}.bottom a.active{color:#00ff88}
+</style></head><body>
+<h1>🎵 PLAY DAT</h1><p class="sub">∞ UNLIMITED • 24/7 • ABBEY ROAD ONE KNOB 75%</p>
+<div class="card">
+<div class="knob">75%</div>
+<div class="now" id="now">No song - Add MP3 below!</div>
+<audio id="player" controls></audio>
+
+<input id="fileInput" type="file" accept="audio/*,.mp3" multiple style="display:none">
+<button class="btn btn-add" onclick="document.getElementById('fileInput').click()">+ ADD MP3 FROM PHONE - INSTANT PLAY</button>
+
+<div id="list"></div>
+
+<button class="btn btn-live" onclick="location.href='studio7.html'">● STUDIO 7 - GO LIVE BROADCAST</button>
+<p style="color:#555;font-size:11px;margin-top:10px">Songs added play instantly and save on this phone. For all listeners to hear worldwide, upload same MP3 to GitHub repo.</p>
+</div>
+
+<div style="height:70px"></div>
+<div class="bottom">
+<a href="index.html" class="active">📻 Play</a>
+<a href="studio7.html">🎙️ Studio</a>
+<a href="admin-add-mp3.html">➕ Add</a>
+<a href="https://papacentral23-spec.github.io/PLAY-DAT/">🌐 Share</a>
+</div>
+
+<script>
+let songs = JSON.parse(localStorage.getItem('playdat_v3') || '[]');
+let names = JSON.parse(localStorage.getItem('playdat_names') || '{}');
+let current = 0;
+const player = document.getElementById('player');
+
+function save(){ localStorage.setItem('playdat_v3', JSON.stringify(songs)); localStorage.setItem('playdat_names', JSON.stringify(names)); render(); }
+
+function render(){
+  let html = songs.map((url, idx)=>{
+    let displayName = names[url] || url.split('/').pop();
+    // cut long name
+    if(displayName.length>30) displayName = displayName.substring(0,30)+'...';
+    return `<div class="song"><b>${idx===current?'▶️ ':''}${displayName}</b><span class="del" onclick="removeSong(${idx})">✕</span></div>`;
+  }).join('');
+  document.getElementById('list').innerHTML = html || '<p style="color:#444">No songs added yet. Tap + ADD MP3</p>';
+  if(songs.length) document.getElementById('now').innerText = 'Now Playing: ' + (names[songs[current]] || songs[current].split('/').pop());
+}
+
+function removeSong(i){ songs.splice(i,1); save(); if(i===current){ current=0; playCurrent(); } }
+
+function playCurrent(){
+  if(!songs.length) return;
+  player.src = songs[current];
+  player.play().catch(()=>{});
+  render();
+}
+
+player.onended = ()=>{ current=(current+1)%songs.length; playCurrent(); };
+
+document.getElementById('fileInput').addEventListener('change', (e)=>{
+  const files = e.target.files;
+  if(!files.length) return;
+  for(let f of files){
+    let url = URL.createObjectURL(f);
+    songs.push(url);
+    names[url]=f.name;
+  }
+  save();
+  current = songs.length - files.length;
+  playCurrent();
+  alert('✅ Added '+files.length+' song(s)! Playing now!');
+});
+
+render();
+if(songs.length) playCurrent();
+</script></body></html>
