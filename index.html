@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PLAY DAT Radio - Live</title>
+<script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}body{background:#0f0f0f;color:#fff;font-family:Arial;display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px}
+.card{background:#1a1a1a;border-radius:20px;padding:30px;max-width:380px;width:100%;text-align:center;border:1px solid #333}
+.logo{font-size:32px;font-weight:900;color:#ffcc00}.live{color:#00ff88;font-weight:bold;letter-spacing:2px;margin-bottom:20px;font-size:13px}
+.art{width:100%;aspect-ratio:1;background:linear-gradient(135deg,#ffcc00,#ff6a00);border-radius:15px;display:flex;align-items:center;justify-content:center;font-size:70px;margin-bottom:20px}
+button{background:#ffcc00;color:#000;border:none;padding:16px 0;width:100%;border-radius:50px;font-size:18px;font-weight:800;cursor:pointer}
+.status{margin-top:12px;font-size:12px;color:#888}
+</style>
+</head>
+<body>
+<div class="card">
+<div class="logo">PLAY DAT</div>
+<div class="live" id="live">● OFFLINE - Waiting for Host</div>
+<div class="art" id="art">▶</div>
+<h2>Papa Central Live</h2>
+<p style="color:#aaa;font-size:13px;margin:5px 0 20px">Committed To Quality - Kumasi</p>
+<button id="btn" onclick="listen()">▶ PLAY LIVE</button>
+<audio id="audio" autoplay playsinline style="display:none"></audio>
+<div class="status" id="status">Tap PLAY to connect to studio</div>
+</div>
+<script>
+let peer,conn;
+function listen(){
+ document.getElementById('status').innerText='Connecting to Papa Central...';
+ peer=new Peer({config:{iceServers:[{urls:'stun:stun.l.google.com:19302'}]}});
+ peer.on('open',()=>{
+  const call=peer.call('playdat-studio-papa',new MediaStream(),{metadata:{type:'listener'}});
+  call.on('stream',stream=>{
+   document.getElementById('audio').srcObject=stream;
+   document.getElementById('audio').play();
+   document.getElementById('live').innerText='🔴 LIVE ON AIR'; document.getElementById('live').style.color='#00ff88';
+   document.getElementById('btn').innerText='🔊 LISTENING LIVE'; document.getElementById('art').innerText='🔊';
+   document.getElementById('status').innerText='Connected! Loud & Clear from Kumasi';
+   document.getElementById('status').style.color='#00ff88';
+  });
+  call.on('close',()=>{document.getElementById('status').innerText='Studio offline';});
+  call.on('error',()=>{document.getElementById('status').innerText='Studio not live yet. Try again in 10 secs';});
+ });
+ peer.on('error',e=>{document.getElementById('status').innerText='Error: '+e.type+' - Studio not started';});
+}
+</script>
+</body>
+</html>
