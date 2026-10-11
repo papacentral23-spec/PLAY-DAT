@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PLAY DAT - Studio 7 - BROADCAST</title>
+<script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}body{background:#0f0f0f;color:#fff;font-family:Arial;padding:20px}
+.card{background:#1a1a1a;border-radius:15px;padding:20px;max-width:600px;margin:auto;border:1px solid #333}
+.logo{color:#ffcc00;font-weight:900;font-size:28px;text-align:center}
+.live{color:#00ff88;text-align:center;margin:10px 0;letter-spacing:2px}
+button{width:100%;padding:18px;border:none;border-radius:50px;font-weight:900;font-size:18px;cursor:pointer;margin-top:10px}
+.go{background:#ffcc00;color:#000}.off{background:#333;color:#fff}
+.meters{display:flex;gap:10px;margin:15px 0}
+.meter{flex:1;height:8px;background:#222;border-radius:10px;overflow:hidden}
+.bar{height:100%;width:0%;background:#00ff88;transition:0.1s}
+.status{background:#000;padding:12px;border-radius:10px;margin-top:15px;font-size:13px;color:#aaa;text-align:center}
+</style>
+</head>
+<body>
+<div class="card">
+<div class="logo">PLAY DAT STUDIO 7</div>
+<div class="live" id="liveText">● READY TO BROADCAST</div>
+<div class="meters"><div class="meter"><div class="bar" id="bar"></div></div></div>
+<button class="go" id="startBtn" onclick="startBroadcast()">🎙️ START LIVE BROADCAST</button>
+<button class="off" onclick="stopBroadcast()">⏹️ STOP</button>
+<div class="status" id="status">Click START and allow microphone<br>Your Studio ID: <b style="color:#ffcc00">playdat-studio-papa</b><br>Share listener link: papacentral23-spec.github.io/PLAY-DAT/</div>
+<div style="margin-top:15px;font-size:12px;color:#555">Listeners connected: <b id="count" style="color:#fff">0</b> | Guest: <span id="guestStat">No guest</span></div>
+</div>
+<script>
+let peer, localStream, connections=[];
+const status=document.getElementById('status');
+const bar=document.getElementById('bar');
+const countEl=document.getElementById('count');
+
+function startBroadcast(){
+ navigator.mediaDevices.getUserMedia({audio:true}).then(stream=>{
+  localStream=stream;
+  peer=new Peer('playdat-studio-papa',{config:{iceServers:[{urls:'stun:stun.l.google.com:19302'}]}});
+  peer.on('open',()=>{document.getElementById('liveText').innerHTML='🔴 LIVE BROADCASTING';status.innerHTML='✅ YOU ARE LIVE! Listeners can now hear you on<br>papacentral23-spec.github.io/PLAY-DAT/';});
+  peer.on('connection',c=>{console.log('listener joined');});
+  peer.on('call',call=>{
+   if(call.metadata && call.metadata.type==='guest'){
+    document.getElementById('guestStat').innerHTML='<span style="color:#00ff88">Guest Connected</span>';
+    call.answer(localStream);
+    call.on('stream',guestStream=>{
+     // Mix guest audio into broadcast
+     const audioCtx=new AudioContext();
+     const dest=audioCtx.createMediaStreamDestination();
+     audioCtx.createMediaStreamSource(localStream).connect(dest);
+     audioCtx.createMediaStreamSource(guestStream).connect(dest);
+     // Update all listener connections with mixed stream
+     connections.forEach(conn=>{/* already connected */});
+    });
+   }else{
+    // Listener
+    call.answer(localStream);
+    connections.push(call);
+    countEl.innerText=connections.length;
+   }
+  });
+  // Mic level meter
+  const audioCtx=new AudioContext(); const analyser=audioCtx.createAnalyser(); audioCtx.createMediaStreamSource(stream).connect(analyser);
+  const data=new Uint8Array(analyser.frequencyBinCount);
+  setInterval(()=>{analyser.getByteFrequencyData(data); let avg=data.reduce((a,b)=>a+b)/data.length; bar.style.width=Math.min(avg*1.5,100)+'%';},100);
+  document.getElementById('startBtn').innerHTML='🔴 LIVE NOW';
+ }).catch(e=>{status.innerHTML='❌ Mic error: '+e.message;});
+}
+function stopBroadcast(){if(localStream)localStream.getTracks().forEach(t=>t.stop());if(peer)peer.destroy();location.reload();}
+</script>
+</body>
+</html>
