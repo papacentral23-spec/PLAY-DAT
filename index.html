@@ -1,0 +1,25 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>ADD MP3 - PLAY DAT</title>
+<style>body{background:#111;color:#fff;font-family:system-ui;padding:20px;max-width:500px;margin:auto}h1{color:#00ff99;text-align:center}input,button{width:100%;padding:18px;border-radius:12px;margin:10px 0;border:none;font-weight:900}input{background:#222;color:#fff;border:1px solid #444}button.go{background:#00ff99;color:#000}button.back{background:#222;color:#fff;border:1px solid #555}.song{background:#1a1a1a;padding:12px;border-radius:10px;margin:8px 0;display:flex;justify-content:space-between;border-left:4px solid #00ff99}</style></head><body>
+<h1>🎵 EASY ADD MP3</h1><p style="text-align:center;color:#888">No code! Just add songs!</p>
+<input id="file" type="file" accept="audio/*">
+<input id="title" placeholder="Song Title e.g. ALHA-02">
+<button class="go" onclick="add()">+ ADD TO PLAY DAT RADIO</button>
+<div id="list"></div>
+<button class="back" onclick="location.href='index.html'">← BACK TO RADIO</button>
+<p id="status" style="text-align:center;color:#666"></p>
+<script>
+let songs=JSON.parse(localStorage.getItem('playdat_songs')||'["ALHA-01.mp3"]');
+function render(){document.getElementById('list').innerHTML=songs.map((s,i)=>`<div class=song><span>${s}</span><span onclick="remove(${i})" style=color:#ff4444>✕</span></div>`).join('');}
+function remove(i){songs.splice(i,1);localStorage.setItem('playdat_songs',JSON.stringify(songs));render();}
+async function add(){
+let f=document.getElementById('file').files[0];let t=document.getElementById('title').value||(f?f.name:"");
+if(!f){alert("Choose MP3 first!");return;}
+document.getElementById('status').innerText="⏳ Uploading...";
+let fd=new FormData();fd.append('fileToUpload',f);fd.append('reqtype','fileupload');
+try{let r=await fetch('https://catbox.moe/user/api.php',{method:'POST',body:fd});let url=await r.text();
+if(url.startsWith('http')){songs.push(url);if(t){localStorage.setItem('title_'+url,t);}
+localStorage.setItem('playdat_songs',JSON.stringify(songs));document.getElementById('status').innerText="✅ Added! "+t;render();
+}else{throw "fail"}}catch(e){
+let url=URL.createObjectURL(f);songs.push(url);localStorage.setItem('playdat_songs',JSON.stringify(songs));document.getElementById('status').innerText="✅ Added Local (only your phone) - For unlimited, use Catbox link";render();}}
+render();
+</script></body></html>
