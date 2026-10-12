@@ -1,0 +1,44 @@
+<!DOCTYPE html><html><head><meta name="viewport" content="width=device-width,initial-scale=1"><title>PLAY DAT STUDIO FIXED</title><script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script><style>body{background:#000;color:#fff;font-family:Arial;margin:0;padding:0;text-align:center}.top{background:#111;padding:10px;display:flex;justify-content:space-between;border-bottom:2px solid gold}.box{background:#111;margin:10px;padding:12px;border-radius:12px;border:1px solid #333}.btn{padding:10px 16px;border:none;border-radius:8px;margin:5px;font-weight:bold}.gold{background:gold;color:#000}.red{background:red;color:#fff}.grey{background:#222;color:#fff;border:1px solid #444}video{width:100%;max-height:220px;background:#000;border-radius:10px}</style></head><body>
+<div class="top"><span>👑 PLAY DAT STUDIO</span><span id="stat" style="background:#333;padding:5px 10px;border-radius:20px;font-size:12px">⚫ OFFLINE</span></div>
+<div class="box"><video id="myVideo" autoplay muted playsinline></video><div id="vmode" style="color:gold;margin-top:6px">VOICE+VIDEO READY</div></div>
+<div class="box">Host ID: <input id="hid" value="PLAYDAT123" style="background:#000;color:gold;border:1px solid gold;padding:8px;border-radius:6px;width:130px"><br><br>
+<button class="btn grey" onclick="start()">START</button>
+<button class="btn red" onclick="goLive()">🔴 GO LIVE</button>
+<span id="lcnt" style="color:lime">0 listeners</span><br><br>
+<button class="btn grey" onclick="toggleMic()">🎤 Mic ON/OFF</button>
+<button class="btn gold" onclick="document.getElementById('mp3').click()">🎵 Play MP3</button>
+<input type="file" id="mp3" accept="audio/*" style="display:none" onchange="playMP3(this)">
+<audio id="aud" controls style="width:100%;margin-top:8px"></audio>
+<div id="link" style="margin-top:10px;color:gold;font-size:12px;word-break:break-all">Listener: Start first...</div>
+</div><script>
+let peer, myStream, audioStream, combined, isLive=false, count=0, micOn=true;
+function start(){
+ let id=document.getElementById('hid').value.trim()||'PLAYDAT123';
+ navigator.mediaDevices.getUserMedia({video:true,audio:true}).then(s=>{
+  myStream=s; document.getElementById('myVideo').srcObject=s;
+  peer=new Peer(id,{config:{iceServers:[{urls:'stun:stun.l.google.com:19302'}]}});
+  peer.on('open',()=>{document.getElementById('stat').innerText='🟠 READY';document.getElementById('stat').style.background='orange';document.getElementById('link').innerText='Listener Link: https://papacentral23-spec.github.io/PLAY-DAT/listener.html?host='+id+' | Guest: https://papacentral23-spec.github.io/PLAY-DAT/guest.html?host='+id});
+  peer.on('error',e=>{alert('ID taken! Change Host ID to PLAYDAT456 and START again');document.getElementById('stat').innerText='ID TAKEN'});
+  peer.on('call',call=>{
+   call.answer(combined||myStream);
+   call.on('stream',()=>{count++;document.getElementById('lcnt').innerText=count+' listeners'});
+  });
+  document.getElementById('vmode').innerText='✅ READY - Now GO LIVE';
+ });
+}
+function goLive(){isLive=true;document.getElementById('stat').innerText='🔴 LIVE';document.getElementById('stat').style.background='red';updateStream()}
+function updateStream(){
+ let ac=new AudioContext(), dest=ac.createMediaStreamDestination();
+ if(myStream) myStream.getAudioTracks().forEach(t=>{if(micOn) dest.stream.addTrack(t)});
+ if(audioStream) audioStream.getAudioTracks().forEach(t=>dest.stream.addTrack(t));
+ combined=new MediaStream();
+ dest.stream.getAudioTracks().forEach(t=>combined.addTrack(t));
+ if(myStream) myStream.getVideoTracks().forEach(t=>combined.addTrack(t));
+}
+function toggleMic(){micOn=!micOn;updateStream()}
+function playMP3(i){
+ let f=i.files[0]; let url=URL.createObjectURL(f); let a=document.getElementById('aud'); a.src=url; a.play();
+ audioStream=a.captureStream?a.captureStream():a.mozCaptureStream();
+ updateStream();
+}
+</script></body></html>
