@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>GOLD5</title>
+<style>
+body{background:#080600;color:#fff;text-align:center;font-family:system-ui;padding:12px}
+h1{color:#FFD700}
+.card{background:#151300;border:1px solid #3a3300;border-radius:20px;padding:16px;max-width:400px;margin:0 auto}
+.knob{width:150px;height:150px;border-radius:50%;margin:15px auto;background:#111;border:4px solid #FFD700;color:#FFD700;display:flex;align-items:center;justify-content:center;font-size:40px;font-weight:900;box-shadow:0 0 30px #FFD70088}
+.btn{width:100%;padding:15px;border:none;border-radius:12px;font-weight:900;margin:6px 0}
+.gold{background:#FFD700;color:#000}
+.dark{background:#111;color:#FFD700;border:2px solid #FFD700}
+audio{width:100%}
+</style>
+</head>
+<body>
+<h1>👑 PLAY DAT </h1>
+<p style="color:#8a7a40"> -  PLAY</p>
+<div class="card">
+<div class="knob">75%</div>
+<p id="now" style="color:#FFD700">Add MP3 below!</p>
+<audio id="player" controls autoplay></audio>
+<input id="fileInput" type="file" accept="audio/*" multiple style="display:none">
+<button class="btn gold" onclick="document.getElementById('fileInput').click()">+ ADD MP3 - GOLD5 INSTANT PLAY</button>
+<div id="list"></div>
+<button class="btn dark" onclick="location.href='studio7.html'">STUDIO 7 GOLD</button>
+</div>
+<script>
+let songs=JSON.parse(localStorage.getItem('g5')||'[]');
+let names=JSON.parse(localStorage.getItem('g5n')||'{}');
+let cur=0;
+let player=document.getElementById('player');
+function render(){
+let l=document.getElementById('list');
+l.innerHTML='';
+for(let i=0;i<songs.length;i++){
+let n=names[songs[i]]||'Song '+(i+1);
+l.innerHTML+='<div style="background:#1e1a00;padding:10px;margin:5px 0;border-left:4px solid #FFD700;text-align:left">'+n+'</div>';
+}
+if(songs.length){
+document.getElementById('now').innerText='Now: '+(names[songs[cur]]||'Playing');
+}
+}
+function play(){
+if(songs.length==0)return;
+player.src=songs[cur];
+player.play();
+render();
+}
+player.onended=function(){cur=(cur+1)%songs.length;play();};
+document.getElementById('fileInput').addEventListener('change',function(e){
+for(let f of e.target.files){
+let u=URL.createObjectURL(f);
+songs.push(u);
+names[u]=f.name;
+}
+localStorage.setItem('g5',JSON.stringify(songs));
+localStorage.setItem('g5n',JSON.stringify(names));
+cur=songs.length-e.target.files.length;
+play();
+});
+render();
+if(songs.length>0)play();
+</script>
+</body>
+</html>
