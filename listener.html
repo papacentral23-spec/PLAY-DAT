@@ -1,0 +1,43 @@
+<!DOCTYPE html><html><head>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PLAY DAT LISTENER - FIXED</title>
+<script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
+<style>
+body{background:#000;color:#fff;font-family:Arial;text-align:center;margin:0}
+.top{background:linear-gradient(90deg,gold,orange);color:#000;padding:12px;font-weight:bold}
+.box{background:#111;margin:12px;padding:16px;border-radius:16px;border:1px solid #333}
+.btn{padding:16px 26px;border:none;border-radius:30px;font-weight:bold;font-size:19px;width:92%}
+.gold{background:gold;color:#000}
+</style></head><body>
+<div class="top">👑 PLAY DAT WORLD LIVE - KUMASI GHANA 🔴</div>
+<div class="box">
+<div style="color:gold;font-size:22px">🔊 LIVE RADIO</div>
+<div id="st" style="margin:10px;color:#aaa">Ready to connect...</div>
+<div id="hostShow" style="color:lime;font-size:12px;margin-bottom:12px"></div>
+<button class="btn gold" onclick="join()">▶️ TAP TO PLAY RADIO</button><br><br>
+<audio id="aud" autoplay playsinline controls style="width:100%"></audio><br><br>
+<input type="range" id="vol" min="0" max="100" value="90" style="width:80%" oninput="aud.volume=this.value/100;document.getElementById('vv').innerText=this.value+'%'">
+<div>Volume: <span id="vv">90%</span></div>
+<div style="margin-top:14px;color:#666;font-size:11px">If no sound, check studio is LIVE first with same Host ID</div>
+</div>
+<script>
+let aud=document.getElementById('aud');
+function getHost(){let p=new URLSearchParams(location.search);return p.get('host')||'PLAYDAT999'}
+document.getElementById('hostShow').innerText='Host ID: '+getHost()+' | Studio must be LIVE';
+function join(){
+ let host=getHost();
+ document.getElementById('st').innerText='🔗 Connecting to '+host+'...';
+ let peer=new Peer();
+ peer.on('open',()=>{
+  // listener calls with no stream, studio answers
+  let conn=peer.call(host, new MediaStream());
+  conn.on('stream',s=>{
+   document.getElementById('st').innerText='🔴 LIVE ON AIR - Kumasi! 🔊';
+   aud.srcObject=s;
+   aud.play().catch(e=>{document.getElementById('st').innerText='🔴 LIVE - Tap audio controls to play'});
+  });
+  conn.on('error',()=>document.getElementById('st').innerText='❌ Studio not LIVE - Start studio first');
+ });
+ peer.on('error',()=>document.getElementById('st').innerText='❌ Cannot find studio ID '+host+' - Check ID');
+}
+</script></body></html>
