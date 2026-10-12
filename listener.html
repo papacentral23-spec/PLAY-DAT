@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PLAY DAT WORLD - Listener</title>
+<style>
+body{background:#000;color:#fff;font-family:system-ui;padding:20px;text-align:center}
+h1{color:#FFD700;font-size:30px;font-weight:900}
+.sub{color:#888;margin:10px 0 25px}
+.box{max-width:380px;margin:0 auto 20px;background:#111;border:1.5px solid #D4AF37;border-radius:20px;padding:25px}
+.btn{background:linear-gradient(90deg,#FFD700,#D4AF37);color:#000;border:none;padding:14px 28px;border-radius:30px;font-weight:900;font-size:16px}
+.live{display:inline-block;width:10px;height:10px;background:#0f0;border-radius:50%;animation:blink 1s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.2}}
+</style>
+</head>
+<body>
+<h1>🔊 PLAY DAT WORLD</h1>
+<p class="sub">Committed To Quality - Kumasi 🇬🇭</p>
+<div class="box">
+<div style="font-size:50px">🔊</div>
+<h2 style="margin:15px 0">Live Radio Speaker</h2>
+<button class="btn" id="b" onclick="toggle()">🔊 Speaker OFF</button>
+<p id="st" style="margin-top:15px;color:#888">Tap to Listen</p>
+<p style="margin-top:15px;background:#1a1a1a;padding:12px;border-radius:12px"><span class="live"></span> LIVE - <b id="cnt">24</b> Listening</p>
+<audio id="a" src="https://stream.zeno.fm/0r0xa792kwzuv"></audio>
+</div>
+<div class="box">
+<p style="color:#FFD700;font-weight:700">Papa Central - Studio 7 ON AIR</p>
+<p style="margin-top:10px"><a href="guest.html" style="background:#FFD700;color:#000;padding:8px 18px;border-radius:20px;text-decoration:none;font-weight:800">🎙️ Request to Join</a></p>
+</div>
+<a href="index.html" style="color:#FFD700">← Home</a>
+<script>
+let on=false;
+function toggle(){
+ const au=document.getElementById('a'),bt=document.getElementById('b'),st=document.getElementById('st');
+ on=!on;
+ if(on){au.play();bt.innerText="🔊 Speaker ON";st.innerText="🔊 Listening Live...";st.style.color="#0f0"}
+ else{au.pause();bt.innerText="🔊 Speaker OFF";st.innerText="Tap to Listen";st.style.color="#888"}
+}
+setInterval(()=>{document.getElementById('cnt').innerText=Math.floor(20+Math.random()*30)},3000);
+</script>
+</body>
+</html>
