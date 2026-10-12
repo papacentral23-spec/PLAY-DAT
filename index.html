@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>STUDIO 7 - Control</title>
+<style>
+body{background:#111;color:#fff;font-family:system-ui;padding:20px;text-align:center}
+h1{color:#FFD700}
+.card{background:#222;padding:20px;border-radius:15px;margin:20px auto;max-width:400px;border:1px solid #D4AF37}
+button{padding:12px 20px;margin:8px;background:#FFD700;color:#000;border:none;border-radius:20px;font-weight:900;cursor:pointer}
+.off{background:#444;color:#fff}
+.live{color:#0f0;font-weight:900}
+#guestList{margin-top:20px;text-align:left}
+</style>
+</head>
+<body>
+<h1>🎛️ STUDIO 7 CONTROL</h1>
+<p>Committed To Quality</p>
+
+<div class="card">
+<h3>Main Studio Mic</h3>
+<button id="studioBtn" onclick="toggleStudio()">🔴 Mic OFF</button>
+<p id="studioStatus">Studio is Muted</p>
+</div>
+
+<div class="card">
+<h3>Guest Requests</h3>
+<p id="noGuest">No guest requesting...</p>
+<div id="guestList"></div>
+<button onclick="clearRequests()">Clear All</button>
+</div>
+
+<a href="index.html" style="color:#D4AF37">← Back to World</a>
+
+<script>
+let studioOn=false;
+function toggleStudio(){
+ studioOn=!studioOn;
+ document.getElementById('studioBtn').innerText=studioOn?'🎙️ Mic ON - LIVE':'🔴 Mic OFF';
+ document.getElementById('studioBtn').style.background=studioOn?'#0f0':'#FFD700';
+ document.getElementById('studioStatus').innerHTML=studioOn?'<span class="live">● LIVE ON AIR</span>':'Studio is Muted';
+ localStorage.setItem('studioLive',studioOn);
+}
+setInterval(()=>{
+ let req = localStorage.getItem('guestRequest');
+ if(req){
+  document.getElementById('noGuest').style.display='none';
+  document.getElementById('guestList').innerHTML = `<div style="background:#000;padding:12px;border-radius:10px">🎙️ <b>${req}</b> wants LIVE <br><br><button onclick="allowGuest()">✅ ALLOW</button><button class="off" onclick="denyGuest()">❌ DENY</button></div>`;
+ }
+},1000);
+function allowGuest(){
+ localStorage.setItem('guestAllowed','yes');
+ alert('Guest ALLOWED! He can now speak');
+ document.getElementById('guestList').innerHTML='';
+ localStorage.removeItem('guestRequest');
+}
+function denyGuest(){
+ localStorage.removeItem('guestRequest');
+ document.getElementById('guestList').innerHTML='';
+ document.getElementById('noGuest').style.display='block';
+}
+function clearRequests(){
+ localStorage.removeItem('guestRequest');
+ localStorage.removeItem('guestAllowed');
+ location.reload();
+}
+</script>
+</body>
+</html>
