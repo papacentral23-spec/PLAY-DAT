@@ -41,4 +41,11 @@ function playMP3(i){
  audioStream=a.captureStream?a.captureStream():a.mozCaptureStream();
  updateStream();
 }
-</script></body></html>
+</script></body></html><audio id="mp3" src="your.mp3" controls></audio>let mp3El = document.getElementById('mp3');
+let audioCtx = new AudioContext();
+let source = audioCtx.createMediaElementSource(mp3El);
+let dest = audioCtx.createMediaStreamDestination();
+source.connect(dest);
+source.connect(audioCtx.destination); // hear locally
+// now use dest.stream for PeerJS instead of mic for music
+myStream = dest.stream;
