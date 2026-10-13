@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PLAY DAT WORLD -  </title>
+<style>
+body{background:#000;color:#fff;font-family:Arial;text-align:center;margin:0}
+.top{background:#D4AF37;color:#000;padding:14px;font-weight:900}
+.card{background:#111;border:2px solid #D4AF37;border-radius:20px;margin:20px;padding:22px}
+.play{background:linear-gradient(90deg,#FFD700,#D4AF37);color:#000;border:none;padding:18px 50px;border-radius:50px;font-size:22px;font-weight:900}
+.live{background:red;color:#fff;padding:4px 10px;border-radius:12px;font-size:11px;animation:blink 1s infinite}
+@keyframes blink{50%{opacity:.5}}
+#ytWrap{position:relative;width:100%;height:240px;background:#000;border-radius:14px;overflow:hidden;margin-top:15px}
+#ytWrap iframe{width:100%;height:100%;border:none}
+.hideYT{position:absolute;bottom:0;left:0;right:0;height:38px;background:#111;display:flex;align-items:center;justify-content:center;color:#D4AF37;font-size:12px;font-weight:bold}
+</style>
+</head>
+<body>
+<div class="top">👑 PLAY DAT WORLD - UNLIMITED VOICE <span class="live">● LIVE</span></div>
+
+<div class="card">
+<h2 style="color:#FFD700;margin:6px">🔊 TAP TO PLAY - UNLIMITED VOICE</h2>
+<p id="status" style="color:#888;font-size:13px">     </p>
+
+<button class="play" id="btn" onclick="playNow()">▶️ PLAY </button>
+
+<div id="ytWrap" style="margin-top:18px">
+<iframe id="yt" src="https://www.youtube.com/embed/id7JOjDMmEI?autoplay=1&controls=0&modestbranding=1&rel=0&showinfo=0&iv_load_policy=3&fs=0&playsinline=1" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+<div class="hideYT">👑 PLAY DAT WORLD - - Committed To Quality</div>
+</div>
+
+<p style="font-size:12px;color:#777;margin-top:12px">🔥 Unlimited Listeners -  +  - </p>
+<p style="font-size:11px;color:#333;margin-top:8px">Now playing:  •  </p>
+</div>
+
+<script>
+function playNow(){
+ let f=document.getElementById('yt');
+ f.src="https://www.youtube.com/embed/id7JOjDMmEI?autoplay=1&controls=0&modestbranding=1&rel=0&showinfo=0&iv_load_policy=3&fs=0&playsinline=1";
+ document.getElementById('status').innerText='✅ LIVE UNLIMITED - Hearing Voice4L from Kumasi';
+ document.getElementById('btn').innerText='🔊 LIVE UNLIMITED';
+ document.getElementById('btn').style.background='#0f0';
+}
+</script>
+</body>
+</html>
