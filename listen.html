@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PLAY DAT -    </title>
+<style>
+body{background:#000;color:#fff;font-family:Arial;text-align:center;padding:20px}
+.btn{padding:12px 18px;margin:5px;border:none;border-radius:8px;font-weight:bold;cursor:pointer}
+.mode{background:#222;color:#fff;border:2px solid #555}
+.mode.active{background:#ff0066;border-color:#ff0066}
+#videoBox{width:100%;max-width:400px;height:225px;background:#111;margin:15px auto;border-radius:12px;display:none}
+#status{margin:10px;color:#0f0}
+input{padding:10px;width:80%;max-width:300px;border-radius:8px;border:none;margin:10px}
+</style>
+</head>
+<body>
+<h2>📻 PLAY DAT WORLD</h2>
+<p> COMMITTED TO QUALITY </p>
+
+<input id="studioId" placeholder="Enter Studio ID e.g. PLAY-DAT-STUDIO-14">
+<br>
+<button class="btn" style="background:#00ff66" onclick="connect()">🔴 CONNECT</button>
+
+<div id="controls" style="display:none">
+<p id="status">Connected!</p>
+
+<button class="btn mode active" id="btnLIVE" onclick="setMode('LIVE')">🔴 LIVE</button>
+<button class="btn mode" id="btnVOICE" onclick="setMode('VOICE')">🎙️ VOICE ONLY</button>
+<button class="btn mode" id="btnVIDEO" onclick="setMode('VIDEO')">📹 VIDEO</button>
+<button class="btn mode" id="btnMUSIC" onclick="setMode('MUSIC')">🎵 MUSIC</button>
+
+<div id="videoBox">
+<video id="guestVideo" autoplay playsinline style="width:100%;height:100%;border-radius:12px"></video>
+</div>
+
+<audio id="audioPlayer" controls autoplay style="width:100%;margin-top:15px"></audio>
+
+<p style="font-size:12px;color:#aaa;margin-top:20px">🎙️ VOICE saves data | 📹 VIDEO  data</p>
+</div>
+
+<script>
+let mode='LIVE';
+function connect(){
+ let id=document.getElementById('studioId').value;
+ if(!id){alert('Enter Studio ID Boss!');return;}
+ document.getElementById('controls').style.display='block';
+ document.getElementById('status').innerText='🔴 Connected to: '+id;
+ setMode('LIVE');
+ // Your existing audio link - plays ALHA-01.mp3 from studio
+ document.getElementById('audioPlayer').src='ALHA-01.mp3';
+}
+
+function setMode(m){
+ mode=m;
+ document.querySelectorAll('.mode').forEach(b=>b.classList.remove('active'));
+ document.getElementById('btn'+m).classList.add('active');
+ let vb=document.getElementById('videoBox');
+ let ap=document.getElementById('audioPlayer');
+ 
+ if(m==='VOICE'){
+   vb.style.display='none';
+   ap.style.display='block';
+   document.getElementById('status').innerText='🎙️ VOICE ONLY - Data saving mode';
+ }else if(m==='VIDEO'){
+   vb.style.display='block';
+   ap.style.display='block';
+   document.getElementById('status').innerText='📹 VIDEO MODE - Watching live';
+ }else if(m==='MUSIC'){
+   vb.style.display='none';
+   ap.style.display='block';
+   document.getElementById('status').innerText='🎵 MUSIC MODE';
+ }else{
+   vb.style.display='block';
+   ap.style.display='block';
+   document.getElementById('status').innerText='🔴 LIVE - Everything';
+ }
+}
+</script>
+</body>
+</html>
