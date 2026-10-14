@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PLAY-DAT WORLD RADIO - LIVE</title>
+<style>
+body{background:#252525;color:#D4AF37;font-family:sans-serif;text-align:center;padding:20px}
+.player{max-width:700px;margin:20px auto;background:#3a3a3a;border:3px solid #D4AF37;border-radius:15px;padding:20px}
+.switch{display:flex;gap:10px;justify-content:center;margin:15px}
+.switch button{padding:12px 25px;border-radius:8px;border:0;font-weight:bold;cursor:pointer}
+.active-audio{background:#D4AF37;color:#000} .active-video{background:#FF4500;color:#fff}
+#yt{width:100%;height:380px;display:none;border-radius:10px}
+#audioOnly{display:block}
+.vu{height:60px;background:#111;border:1px solid #444;margin:10px 0}
+</style></head><body>
+<h1>PLAY-DAT WORLD RADIO 🌍<br><small style="color:#888">LIVE.     -   </small></h1>
+<div class="player">
+<div class="switch">
+<button id="btnA" class="active-audio" onclick="mode('audio')">🎵 AUDIO MODE - Save Data</button>
+<button id="btnV" onclick="mode('video')">📹 VIDEO MODE - See Studio</button>
+</div>
+<div id="audioOnly">
+<div class="vu" id="vu"></div>
+<h3>🔴 LIVE AUDIO - 16CH FCA1616</h3>
+<audio id="audioPlayer" controls autoplay style="width:100%"></audio>
+<p style="color:#888">Listening in AUDIO - ,  warmth</p>
+</div>
+<iframe id="yt" src="" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+<p>Listeners: <span id="count">∞ UNLIMITED</span> | Switch anytime Boss!</p>
+</div>
+<script>
+// PUT YOUR HIDDEN YOUTUBE VIDEO ID HERE
+const HIDDEN_YT_ID = "YOUR_HIDDEN_ID_HERE"; 
+// e.g. if your link is youtube.com/watch?v=dQw4w9WgXcQ then ID is dQw4w9WgXcQ
+
+function mode(m){
+ if(m=='audio'){
+  document.getElementById('yt').style.display='none';
+  document.getElementById('audioOnly').style.display='block';
+  document.getElementById('btnA').className='active-audio';
+  document.getElementById('btnV').className='';
+  document.getElementById('yt').src='';
+ }else{
+  document.getElementById('yt').src=`https://www.youtube.com/embed/${HIDDEN_YT_ID}?autoplay=1&mute=0&controls=1`;
+  document.getElementById('yt').style.display='block';
+  document.getElementById('audioOnly').style.display='none';
+  document.getElementById('btnV').className='active-video';
+  document.getElementById('btnA').className='';
+ }
+}
+// Optional: Connect to your studio.html WebRTC audio for AUDIO mode
+// Your studio.html should publish audio to listener
+</script>
+</body></html>
