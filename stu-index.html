@@ -1,0 +1,88 @@
+<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>PLAY-DAT STUDIO</title>
+<style>*{margin:0;padding:0;box-sizing:border-box}body{background:#050505;color:#ffcc66;font-family:Arial;min-height:100vh;display:flex;flex-direction:column}
+.top{padding:10px 14px;background:linear-gradient(90deg,#cc0000,#660000);border-bottom:3px solid #ffcc66;color:#fff;display:flex;justify-content:space-between;align-items:center}
+.btn-red{margin:10px;background:linear-gradient(180deg,#ff2a2a,#990000);color:#fff;border:2px solid #ff5555;border-radius:28px;padding:14px;font-weight:900;width:calc(100% - 20px);font-size:15px;cursor:pointer;box-shadow:0 0 15px rgba(255,0,0,.7);animation:pulse 1.5s infinite} @keyframes pulse{0%,100%{box-shadow:0 0 12px red}50%{box-shadow:0 0 25px red}}
+.row{display:flex;gap:8px;padding:0 10px 10px;align-items:center;overflow-x:auto}
+.circle{width:70px;height:70px;background:radial-gradient(circle at 30% 30%,#fff,#ffcc66,#b38600);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#000;font-weight:900;font-size:11px;text-align:center;border:3px solid #fff;flex-shrink:0;box-shadow:0 0 15px #ffcc66}
+.bGold{flex:1;min-width:100px;background:linear-gradient(180deg,#ffdf80,#ff9900);border:2px solid #ffcc66;border-radius:20px;padding:12px;font-weight:900;color:#000;font-size:11px;cursor:pointer;text-align:center;line-height:12px}
+.bRed{flex:1;min-width:100px;background:linear-gradient(180deg,#ff1a1a,#990000);border:2px solid #ff5555;border-radius:20px;padding:12px;font-weight:900;color:#fff;font-size:11px;cursor:pointer;text-align:center;line-height:12px}
+.bS{width:60px;height:44px;background:linear-gradient(#ffdf80,#b38600);border-radius:20px;display:flex;align-items:center;justify-content:center;font-weight:900;color:#000;border:2px solid #ffcc66;flex-shrink:0;cursor:pointer}
+.preview{margin:10px;border:3px solid #ff0000;border-radius:12px;overflow:hidden;background:#000;min-height:220px;box-shadow:0 0 15px rgba(255,0,0,.3)}
+.ph{padding:8px 12px;background:#111;display:flex;align-items:center;gap:8px;font-size:10px;font-weight:900;color:#ffcc66;border-bottom:1px solid #333}
+.dot{width:10px;height:10px;background:#ff0000;border-radius:50%;box-shadow:0 0 8px red;animation:blink 1s infinite} @keyframes blink{50%{opacity:.3}}
+.pb{height:240px;background:#000;display:flex;align-items:center;justify-content:center;position:relative;cursor:pointer}
+.pb span{font-size:28px;font-weight:900;color:#333;text-align:center}
+.pb video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:2;display:none}
+.jingles{margin:0 10px;background:#0f0f0f;border:2px solid #333;border-radius:12px;padding:10px}
+.jPad{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px;margin-top:8px}
+.jBtn{background:#1a1a1a;border:2px solid #444;border-radius:10px;padding:10px 4px;font-weight:900;font-size:9px;color:#ffcc66;text-align:center;cursor:pointer;line-height:10px}
+.jBtn.on{background:linear-gradient(#ffdf80,#ff9900);color:#000;border-color:#ffcc66;box-shadow:0 0 10px #ffcc66}
+.rack{display:flex;gap:8px;padding:10px;background:#0a0a0a;overflow-x:auto;border-top:1px solid #222;border-bottom:1px solid #222}
+.fx{min-width:88px;height:62px;background:#222;border:2px solid #444;border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:9px;font-weight:900;flex-shrink:0;cursor:pointer;color:#aaa}
+.fx.on{border-color:#ffcc66;background:#2a2000;color:#ffcc66;box-shadow:0 0 10px #ffcc66}
+.mixerTitle{padding:10px 14px;font-weight:900;font-size:11px;letter-spacing:1px;background:#0a0a0a;display:flex;justify-content:space-between;align-items:center}
+.autoBtn{padding:5px 12px;border-radius:14px;border:2px solid #00ff88;background:#001a0f;color:#00ff88;font-size:9px;font-weight:900;cursor:pointer}
+.autoBtn.on{background:#00ff88;color:#000}
+.mixer{display:flex;gap:10px;padding:10px 12px;overflow-x:auto;background:#000;min-height:190px;padding-bottom:90px}
+.ch{min-width:94px;width:94px;background:linear-gradient(#2a2a2a,#151515);border:2px solid #444;border-radius:12px;padding:8px;display:flex;flex-direction:column;align-items:center;flex-shrink:0;height:172px}
+.fader{width:30px;height:110px;background:#000;border:2px solid #333;border-radius:10px;position:relative;margin-top:8px}
+.thumb{width:30px;height:26px;background:linear-gradient(#ffdf80,#b38600);border-radius:6px;position:absolute;left:-2px;top:45%;display:flex;align-items:center;justify-content:center;color:#000;font-weight:900;font-size:11px;touch-action:none;cursor:grab}
+.vidBox{width:76px;height:46px;background:#000;border:1px solid #ffcc66;border-radius:5px;overflow:hidden;margin:5px 0}
+.bottom{position:fixed;bottom:0;left:0;right:0;height:66px;background:#111;border-top:3px solid red;display:flex;align-items:center;justify-content:space-between;padding:8px 14px;z-index:999}
+.rec{width:116px;height:44px;background:linear-gradient(#ff3b3b,#b30000);border:2px solid #fff;border-radius:28px;color:#fff;font-weight:900;font-size:14px;cursor:pointer}
+.rec.on{background:#fff;color:red;animation:bl.8s infinite} @keyframes bl{50%{box-shadow:0 0 20px red}}
+.save{width:88px;height:38px;background:linear-gradient(#ffdf80,#b38600);border:none;border-radius:20px;font-weight:900;cursor:pointer}
+</style></head><body>
+<div class="top"><div><b>▶ - PLAY-DAT STUDIO</b><br><small style="font-size:9px;color:#ffcc88">POWER V10 • PC + PHONE</small></div><div style="background:#ffcc66;color:#000;padding:4px 10px;border-radius:14px;font-weight:900;font-size:10px">S PLAY-DAT T<br><span style="color:red">LIVE</span></div></div>
+
+<button class="btn-red" id="btnVideo">VIDEO TO CH1 - TAP TO START</button>
+
+<div class="row"><div class="circle">FRANK</div><button class="bGold" id="btnPlay">▶️ PLAY<br>DAT WORLD</button><button class="bRed" id="btnMix">LT MIX<br>READY</button><div class="bS" id="btn8">+8</div></div>
+
+<div class="preview"><div class="ph"><div class="dot"></div> PLAY-DAT POWER PREVIEW • LIVE</div><div class="pb" id="pBody"><span id="pTxt" style="color:#222">NO VIDEO</span><video id="pVid" autoplay muted playsinline></video></div></div>
+
+<div class="jingles"><b style="font-size:10px;color:#aaa">POWER PAD - TAP TO PLAY OVER MIX</b>
+<div class="jPad">
+<div class="jBtn" onclick="playJingle(this,0)">▶️ STATION<br>ID</div>
+<div class="jBtn" onclick="playJingle(this,1)">🔥 NEWS<br>BED</div>
+<div class="jBtn" onclick="playJingle(this,2)">🎵 MUSIC<br>BED</div>
+<div class="jBtn" onclick="playJingle(this,3)">📞 CALLER<br>BEEP</div>
+<div class="jBtn" onclick="playJingle(this,4)">📢 ADVERT<br>BED</div>
+<div class="jBtn" onclick="playJingle(this,5)">🎤 SHOW<br>OPEN</div>
+<div class="jBtn" onclick="playJingle(this,6)">🔔 ALERT<br>TONE</div>
+<div class="jBtn" onclick="playJingle(this,7)">🎙️ MIC<br>FX</div>
+</div></div>
+
+<div class="rack"><div class="fx on">FTG EQ</div><div class="fx on">FTG COMP</div><div class="fx on">LOUDER</div><div class="fx">3F7</div><div class="fx">MIC BOOST</div><div class="fx">NOISE GATE</div></div>
+
+<div class="mixerTitle"><span>MIXER - POWER FADERS</span><button class="autoBtn on" id="autoDuck">🟢 AUTO-DUCK ON</button></div>
+<div class="mixer" id="mixer"></div>
+
+<div class="bottom"><button class="rec" id="btnRec">● REC</button><div style="text-align:center"><div id="time" style="color:#fff;font-weight:900;font-family:monospace;font-size:18px">00:00</div><div id="info" style="font-size:9px;color:#ffcc66">READY</div></div><button class="save" id="btnSave">💾 SAVE</button></div>
+
+<audio id="aud" crossorigin="anonymous"></audio>
+<script>
+let C=0,stream=null,recorder=null,chunks=[],isRec=false,timer=null,sec=0,actx=null,gains={},master=null,duckOn=true;
+let aud=document.getElementById('aud');
+function addCh(n){for(let i=0;i<n;i++){C++;let id=C;let d=document.createElement('div');d.className='ch';d.id='ch'+id;
+if(id==1){d.innerHTML=`<div style="font-size:7px;font-weight:900;color:#ffcc66">📹 CH ${id} VIDEO</div><div class="vidBox" id="vbox${id}"><div style="color:#555;font-size:6px;padding:14px 2px;text-align:center">NO VIDEO</div></div><div style="display:flex;gap:3px;margin:4px 0"><button style="width:34px;height:15px;font-size:6px;border-radius:6px;border:1px solid #0f8;color:#0f8;background:#111">SOLO</button><button style="width:34px;height:15px;font-size:6px;border-radius:6px;border:1px solid #f55;color:#f55;background:#111" onclick="toggleMute(${id})">MUTE</button></div><div class="fader"><div class="thumb" id="t${id}">${id}</div></div>`;}
+else{d.innerHTML=`<div style="font-size:7px;font-weight:900">CH ${id}</div><div style="width:32px;height:32px;background:#666;border-radius:50%;margin:4px;border:2px solid #555"></div><div style="display:flex;gap:3px;margin:4px 0"><button style="width:34px;height:15px;font-size:6px;border-radius:6px;border:1px solid #0f8;color:#0f8;background:#111">SOLO</button><button style="width:34px;height:15px;font-size:6px;border-radius:6px;border:1px solid #f55;color:#f55;background:#111" onclick="toggleMute(${id})">MUTE</button></div><div class="fader"><div class="thumb" id="t${id}">${id}</div></div>`;}
+document.getElementById('mixer').appendChild(d);initFader(id);}}
+function initFader(id){let th=document.getElementById('t'+id);let tr=th.parentElement;let drag=false;
+function move(y){let r=tr.getBoundingClientRect();let top=((y-r.top)/r.height)*100;top=Math.max(0,Math.min(80,top));th.style.top=top+'%';let vol=1-top/80;if(gains[id])gains[id].gain.value=vol; if(duckOn&&id==1&&vol>0.4){if(gains[2])gains[2].gain.value=0.15;}}
+th.addEventListener('touchstart',e=>{drag=true;e.preventDefault()},{passive:false});th.addEventListener('mousedown',()=>drag=true);
+window.addEventListener('touchmove',e=>{if(!drag)return;move(e.touches[0].clientY);e.preventDefault()},{passive:false});
+window.addEventListener('mousemove',e=>{if(drag)move(e.clientY)});window.addEventListener('mouseup',()=>{drag=false;if(duckOn&&gains[2])setTimeout(()=>gains[2].gain.value=0.8,800)});window.addEventListener('touchend',()=>{drag=false;if(duckOn&&gains[2])setTimeout(()=>gains[2].gain.value=0.8,800)});}
+function toggleMute(id){let ch=document.getElementById('ch'+id);let m=ch.style.opacity==='0.3';ch.style.opacity=m?'1':'0.3';if(gains[id])gains[id].gain.value=m?0.8:0;}
+addCh(4);
+document.getElementById('btn8').onclick=()=>addCh(8);
+document.querySelectorAll('.fx').forEach(f=>f.onclick=()=>f.classList.toggle('on'));
+document.getElementById('autoDuck').onclick=function(){duckOn=!duckOn;this.classList.toggle('on');this.textContent=duckOn?'🟢 AUTO-DUCK ON':'⚪ AUTO-DUCK OFF';};
+document.getElementById('btnPlay').onclick=async()=>{try{if(!actx)actx=new(window.AudioContext||window.webkitAudioContext)();await actx.resume();if(!master){master=actx.createGain();master.gain.value=1;master.connect(actx.destination);}aud.src='https://stream.zeno.fm/5y1q2f8q2k8uv';await aud.play();let src=actx.createMediaElementSource(aud);let dest=actx.createMediaStreamDestination();for(let i=1;i<=C;i++){if(!gains[i]){gains[i]=actx.createGain();gains[i].gain.value=0.8;}src.connect(gains[i]);gains[i].connect(dest);gains[i].connect(master);}stream=dest.stream;document.getElementById('btnMix').innerHTML='LIVE<br>🟢';document.getElementById('info').textContent='DAT LIVE 🟢';}catch(e){alert(e.message)}};
+document.getElementById('btnVideo').onclick=async()=>{try{let st=await navigator.mediaDevices.getUserMedia({video:true,audio:true});let pv=document.getElementById('pVid');pv.srcObject=st;pv.style.display='block';document.getElementById('pTxt').style.display='none';let vb=document.getElementById('vbox1');if(vb){vb.innerHTML='';let v2=document.createElement('video');v2.srcObject=st;v2.autoplay=true;v2.muted=true;v2.playsInline=true;v2.style.width='100%';v2.style.height='100%';v2.style.objectFit='cover';vb.appendChild(v2);}if(actx&&master){let vs=actx.createMediaStreamSource(st);if(!gains[1]){gains[1]=actx.createGain();gains[1].gain.value=0.9;gains[1].connect(master);}vs.connect(gains[1]);}if(stream){st.getAudioTracks().forEach(t=>{try{stream.addTrack(t)}catch(e){}});}document.getElementById('info').textContent='VIDEO CH1 ✅';}catch(e){alert('Allow camera: '+e.message)}};
+document.getElementById('pBody').onclick=()=>document.getElementById('btnVideo').click();
+function toggleRec(){let b=document.getElementById('btnRec'),info=document.getElementById('info'),time=document.getElementById('time');if(!isRec){if(!stream){alert('PLAY DAT WORLD first!');return;}chunks=[];recorder=new MediaRecorder(stream);recorder.ondataavailable=e=>{if(e.data.size>0)chunks.push(e.data)};recorder.onstop=()=>{window.blob=new Blob(chunks,{type:'audio/webm'});info.textContent='READY TO SAVE ✅';info.style.color='#0f8';};recorder.start();isRec=true;b.classList.add('on');b.textContent='■ STOP';info.textContent='RECORDING...';info.style.color='#f44';sec=0;timer=setInterval(()=>{sec++;time.textContent=String(Math.floor(sec/60)).padStart(2,'0')+':'+String(sec%60).padStart(2,'0');},1000);}else{recorder.stop();isRec=false;b.classList.remove('on');b.textContent='● REC';clearInterval(timer);}}
+document.getElementById('btnRec').onclick=toggleRec;
+document.getElementById('btnSave').onclick=()=>{if(!window.blob){alert('No recording!');return;}let u=URL.createObjectURL(window.blob);let a=document.createElement('a');a.href=u;a.download='PLAY-DAT_V10_'+Date.now()+'.webm';a.click();};
+function playJingle(el,i){if(!actx)return;el.classList.add('on');setTimeout(()=>el.classList.remove('on'),800);let o=actx.createOscillator();let g=actx.createGain();o.frequency.value=[440,523,659,784,880,1046,1200,1500][i]||440;g.gain.value=0.3;o.connect(g);g.connect(master);o.start();g.gain.exponentialRampToValueAtTime(0.01,actx.currentTime+0.8);o.stop(actx.currentTime+0.8);}
+</script></body></html>
