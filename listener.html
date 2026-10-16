@@ -1,0 +1,28 @@
+<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>LISTENER - </title>
+<style>*{margin:0;padding:0;box-sizing:border-box}body{background:#080500;color:#ffdf80;font-family:Arial;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:20px}
+.top{width:100%;max-width:500px;padding:14px;background:linear-gradient(90deg,#1a0f00,#b38600,#ffcc00,#ffdf88,#ffcc00,#b38600,#1a0f00);border-radius:16px;border:3px solid #ffcc00;display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
+.badge{background:#000;color:#ffcc00;padding:8px 14px;border-radius:16px;border:3px solid #ffcc00;font-weight:900;font-size:11px;text-align:center}
+.speaker{width:200px;height:200px;background:radial-gradient(#ffef99,#ffcc00,#b38600);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:90px;border:6px solid #ffef99;box-shadow:0 0 40px #ffcc00;margin:20px;cursor:pointer}
+.speaker.on{animation:beat 0.5s infinite} @keyframes beat{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
+.controls{width:100%;max-width:500px;background:#000;border:3px solid #ffcc00;border-radius:16px;padding:16px}
+.btnGold{width:100%;padding:18px;background:linear-gradient(#ffef99,#ffcc00,#b38600);border:3px solid #ffef99;border-radius:24px;color:#000;font-weight:900;font-size:16px;cursor:pointer;margin:8px 0}
+.btnGold.off{background:#1a1a1a;color:#ffcc00;border-color:#b38600}
+</style></head><body>
+<div class="top"><div><b>▶ PLAY DAT WORLD</b><br><small style="color:#000;font-weight:900">LISTENER GOLDEN 64-BIT</small></div><div class="badge"></div></div>
+<div class="speaker" id="spk" onclick="togglePlay()">🔊</div>
+<div style="background:linear-gradient(#ffef99,#ffcc00);color:#000;padding:8px 16px;border-radius:20px;font-weight:900;font-size:12px;border:2px solid #fff">⚡  • 1546dB HEADROOM</div>
+<div class="controls">
+<div style="text-align:center;font-weight:900;color:#ffcc00;letter-spacing:3px;margin-bottom:12px">🎧 LISTENER GOLDEN</div>
+<button class="btnGold off" id="btnPlay" onclick="togglePlay()">▶️ PLAY DAT WORLD - TAP</button>
+<button class="btnGold off" id="btnMp3" onclick="playMp3()">🎵 PLAY ALHA-01 - 64BIT LOOP</button>
+<div style="background:#001a0a;border:3px solid #00ff88;border-radius:12px;padding:12px;display:flex;justify-content:space-between;font-weight:900;font-size:11px;color:#00ff88;margin-top:10px"><span id="status">🔴 OFFLINE</span><span id="time">00:00</span></div>
+</div>
+<div style="display:flex;gap:10px;width:100%;max-width:500px;margin-top:10px"><button class="btnGold" style="flex:1" onclick="location.href='index.html'">🎛️ STUDIO</button><button class="btnGold" style="flex:1;background:#1a1a1a;color:#ffcc00;border-color:#ffcc00" onclick="location.href='guest.html'">🎙️ GUEST</button></div>
+<audio id="aud" crossorigin="anonymous"></audio><audio id="mp3" src="ALHA-01.mp3" preload="auto" loop></audio>
+<script>
+let actx=null,master=null,playing=false,mp3Playing=false;
+let aud=document.getElementById('aud');let mp3=document.getElementById('mp3');
+function ensureAudio(){if(!actx){actx=new(window.AudioContext||window.webkitAudioContext)({sampleRate:192000});master=actx.createGain();master.connect(actx.destination);}actx.resume();}
+async function togglePlay(){ensureAudio();let btn=document.getElementById('btnPlay');let spk=document.getElementById('spk');let status=document.getElementById('status');if(!playing){aud.src='https://stream.zeno.fm/5y1q2f8q2k8uv';let src=actx.createMediaElementSource(aud);src.connect(master);await aud.play();playing=true;spk.classList.add('on');btn.textContent='⏸️ PAUSE LIVE';btn.classList.remove('off');status.textContent='🟢 LIVE 64BIT GOLD';}else{aud.pause();playing=false;spk.classList.remove('on');btn.textContent='▶️ PLAY DAT WORLD - TAP';btn.classList.add('off');status.textContent='🔴 PAUSED';}}
+function playMp3(){ensureAudio();let btn=document.getElementById('btnMp3');let status=document.getElementById('status');if(!mp3Playing){let s=actx.createMediaElementSource(mp3);s.connect(master);mp3.loop=true;mp3.play();mp3Playing=true;btn.textContent='⏸️ STOP ALHA-01';btn.classList.remove('off');status.textContent='🎵 ALHA-01 64BIT LOOP';}else{mp3.pause();mp3Playing=false;btn.textContent='🎵 PLAY ALHA-01 - 64BIT LOOP';btn.classList.add('off');status.textContent='🔴 STOPPED';}}
+</script></body></html>
