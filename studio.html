@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PLAY-DAT- FADERS + VIRTUAL ROOM</title>
+<style>
+body{margin:0;background:#000;color:gold;font-family:Arial}
+.bg{position:fixed;top:0;left:0;width:100%;height:100%;object-fit:cover;z-index:-2;opacity:0.9}
+.ov{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.3);z-index:-1}
+.top{background:gold;color:#000;padding:10px;text-align:center;font-weight:900;font-size:12px;border-radius:0 0 18px 18px}
+.row{display:flex;gap:6px;padding:8px;overflow-x:auto}
+.b{padding:10px;border-radius:18px;font-weight:900;border:2px solid #fff;white-space:nowrap;font-size:11px}
+.g{background:gold;color:#000}.k{background:#000;color:#0f0;border-color:#0f0;box-shadow:0 0 10px #0f0}
+.box{margin:8px;border:2px solid gold;border-radius:18px;background:rgba(0,0,0,0.75);padding:10px}
+h1{font-size:42px;text-align:center;margin:5px 0;text-shadow:0 0 15px gold;line-height:0.9}
+.faders{display:flex;justify-content:space-around;padding:10px 5px;background:rgba(0,0,0,0.85);border-radius:15px;border:2px solid gold;margin-top:10px}
+.f{ text-align:center}
+.f input[type=range]{ writing-mode:bt-lr; -webkit-appearance:slider-vertical; width:30px; height:110px; accent-color:gold}
+.f label{font-size:8px;display:block;margin-top:4px;font-weight:900}
+.bar{display:flex;gap:5px;margin-top:10px;background:#000;border:2px solid gold;border-radius:25px;padding:4px}
+.bar input{flex:1;background:#222;color:gold;border:1px solid gold;border-radius:20px;padding:10px;font-size:12px}
+.bar button{background:gold;color:#000;border:none;border-radius:20px;padding:10px 18px;font-weight:900}
+</style>
+</head>
+<body>
+<img id="roomBg" class="bg" src="https://images.unsplash.com/photo-1598488035139-bdbb22374218?w=800">
+<div class="ov"></div>
+
+<div class="top">: PLAY-DAT WORLD • :  FADERS + VIRTUAL ROOM</div>
+
+<div class="row">
+<div class="b g"><br>  -<br>VSC</div>
+<div class="b g">▶ PLAY DAT<br>WORLD</div>
+<div class="b k"><br>MIX READY</div>
+<div class="b g">+8</div>
+</div>
+
+<div class="box">
+<div style="display:flex;justify-content:space-between;font-size:9px">● LIVE • PLAY-DAT WORLD • 64-BIT ENGINE <span style="background:#0f0;width:10px;height:10px;border-radius:50%;display:inline-block;box-shadow:0 0 10px #0f0"></span></div>
+<h1>RM<br>ALL</h1>
+<p style="text-align:center;font-size:9px">VIRTUAL ROOM ACTIVE • TEXT-TO-ROOM ENABLED</p>
+
+<!-- FADERS BACK HERE BOSS! -->
+<div class="faders">
+<div class="f"><input type="range" min="0" max="100" value="80"><label>CH1</label></div>
+<div class="f"><input type="range" min="0" max="100" value="75"><label>CH2</label></div>
+<div class="f"><input type="range" min="0" max="100" value="85"><label>CH3</label></div>
+<div class="f"><input type="range" min="0" max="100" value="70"><label>CH4</label></div>
+<div class="f"><input type="range" min="0" max="100" value="90"><label>CH5</label></div>
+<div class="f"><input type="range" min="0" max="100" value="65"><label>CH6</label></div>
+<div class="f"><input type="range" min="0" max="100" value="80"><label>MASTER</label></div>
+<div class="f"><input type="range" min="0" max="100" value="95"><label>RM ALL</label></div>
+</div>
+
+<div class="bar">
+<input id="txt" placeholder="Type room: make background like in room">
+<button onclick="go()">SET</button>
+</div>
+</div>
+
+<div style="height:90px"></div>
+<div style="position:fixed;bottom:0;left:0;right:0;background:#000;border-top:3px solid gold;display:flex;justify-content:space-between;padding:8px">
+<button style="background:red;color:#fff;border-radius:25px;padding:10px 18px;font-weight:900;border:2px solid gold">● REC 64</button>
+<div style="text-align:center"><div style="font-size:20px;font-weight:900">00:00</div><div style="font-size:6px">64-BIT GOLDEN READY • PLAY-DAT WORLD</div></div>
+<button style="background:gold;color:#000;border-radius:20px;padding:10px 18px;font-weight:900">SAVE 64</button>
+</div>
+
+<script>
+function go(){
+let t=document.getElementById('txt').value.toLowerCase();
+let bg=document.getElementById('roomBg');
+let imgs={
+"room":"https://images.unsplash.com/photo-1598488035139-bdbb22374218?w=800",
+"studio":"https://images.unsplash.com/photo-1598488035139-bdbb22374218?w=800",
+"gold":"https://images.unsplash.com/photo-1514320291840-2e0a9bf2a9ae?w=800",
+"church":"https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=800",
+"kumasi":"https://images.unsplash.com/photo-1511379938547-c1f69419868d?w=800"
+};
+if(t.includes("room")||t.includes("not in")||t.includes("like in")||t.includes("virtual")){
+ bg.src=imgs["room"]; alert("PLAY-DAT WORLD VIRTUAL ROOM ACTIVE!"); return;
+}
+for(let k in imgs){ if(t.includes(k)){ bg.src=imgs[k]; return; } }
+bg.src=imgs["room"];
+}
+</script>
+</body>
+</html>
