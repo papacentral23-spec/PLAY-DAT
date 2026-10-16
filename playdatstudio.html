@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>PLAY-DAT WORLD V15 VIRTUAL ROOM</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#000;color:gold;font-family:Arial;overflow-x:hidden}
+.top{background:linear-gradient(90deg,#FFD700,#FFF, #FFD700);padding:15px;border-radius:0 0 25px 25px;text-align:center;border:3px solid #000;box-shadow:0 0 20px gold}
+.top h1{color:#000;font-size:15px;font-weight:900;line-height:1.2}
+.main{position:relative}
+#bgImage{position:fixed;top:0;left:0;width:100%;height:100%;object-fit:cover;z-index:-1;opacity:0.8;filter:blur(0px)}
+.overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.4);z-index:-1}
+.controls{padding:10px;display:flex;gap:8px;overflow-x:auto}
+.btn{padding:12px 14px;border-radius:20px;font-weight:bold;border:3px solid #fff;white-space:nowrap;box-shadow:0 0 10px gold}
+.gold{background:linear-gradient(gold,#b8860b);color:#000}
+.black{background:#000;color:gold;border-color:gold}
+.green{background:#000;color:#0f0;border-color:#0f0}
+.circle{width:85px;height:85px;border-radius:50%;display:flex;align-items:center;justify-content:center;text-align:center;font-weight:900;font-size:12px}
+.liveBox{margin:12px;border:3px solid gold;border-radius:20px;overflow:hidden;background:rgba(0,0,0,0.85);box-shadow:0 0 20px gold}
+.liveHead{padding:10px 12px;display:flex;justify-content:space-between;align-items:center;background:#111;border-bottom:2px solid gold;font-size:11px;font-weight:bold}
+.stage{padding:15px;text-align:center;min-height:320px;position:relative;background:radial-gradient(rgba(0,0,0,0.2),rgba(0,0,0,0.9))}
+.stage h2{font-size:48px;font-weight:900;line-height:0.9;margin-top:30px;text-shadow:0 0 20px gold}
+.textBar{margin-top:30px;background:rgba(0,0,0,0.9);border:2px solid gold;border-radius:25px;display:flex;padding:5px;gap:5px}
+.textBar input{flex:1;background:#222;border:1px solid gold;border-radius:20px;padding:12px;color:gold;font-size:13px}
+.textBar button{background:gold;color:#000;border:none;border-radius:20px;padding:12px 18px;font-weight:900}
+.bottom{position:fixed;bottom:0;left:0;right:0;background:#000;border-top:3px solid gold;display:flex;justify-content:space-between;padding:10px;z-index:99}
+.rec{background:red;color:#fff;border-radius:25px;padding:12px 20px;font-weight:900;border:3px solid gold}
+</style>
+</head>
+<body>
+<img id="bgImage" src="https://images.unsplash.com/photo-1598488035139-bdbb22374218">
+<div class="overlay"></div>
+
+<div class="top">
+<h1>PLAY-DAT WORLD V15 VIRTUAL ROOM - TEXT TO ROOM<br><small style="font-size:10px">BRAND: PLAY-DAT WORLD • ENGINE: PC 64-BIT VSC</small></h1>
+</div>
+
+<div class="controls">
+<div class="btn gold circle">PC<br>64-BIT<br>VSC</div>
+<div class="btn gold">▶ PLAY<br>DAT<br>WORLD</div>
+<div class="btn green">64-BIT<br>MIX<br>READY</div>
+<div class="btn gold">+8</div>
+</div>
+
+<div class="liveBox">
+<div class="liveHead"><span>● LIVE • PLAY-DAT WORLD • 64-BIT ENGINE</span><span style="width:12px;height:12px;background:#0f0;border-radius:50%;box-shadow:0 0 10px #0f0;display:inline-block"></span></div>
+<div class="stage">
+<div style="background:gold;color:#000;border-radius:20px;padding:5px 12px;display:inline-block;font-size:10px;font-weight:900;position:absolute;right:10px;top:10px">64-BIT DOUBLE</div>
+<h2>RM<br>ALL</h2>
+<p style="font-size:11px;margin-top:8px;letter-spacing:2px">VIRTUAL ROOM ACTIVE<br>NO PHYSICAL ROOM • TEXT-TO-ROOM ENABLED</p>
+
+<div class="textBar">
+<input id="roomText" placeholder="Type room: e.g. make background like in room">
+<button onclick="setRoom()">SET</button>
+</div>
+<p style="font-size:9px;margin-top:8px;opacity:0.7">Type: studio / gold / church / kumasi / abbey road</p>
+</div>
+</div>
+
+<div style="height:80px"></div>
+
+<div class="bottom">
+<button class="rec">● REC 64</button>
+<div style="text-align:center"><div style="font-size:24px;font-weight:900">00:00</div><div style="font-size:7px">64-BIT GOLDEN READY • ALL PC AUDIO</div></div>
+<button class="btn gold">SAVE 64</button>
+</div>
+
+<script>
+const rooms={
+"studio":"https://images.unsplash.com/photo-1598488035139-bdbb22374218",
+"gold":"https://images.unsplash.com/photo-1514320291840-2e0a9bf2a9ae",
+"church":"https://images.unsplash.com/photo-1470225620780-dba8ba36b745",
+"kumasi":"https://images.unsplash.com/photo-1511379938547-c1f69419868d",
+"abbey":"https://images.unsplash.com/photo-1511379938547-c1f69419868d",
+"room":"https://images.unsplash.com/photo-1598488035139-bdbb22374218",
+"podcast":"https://images.unsplash.com/photo-1478737270239-2f02b77fc618"
+};
+function setRoom(){
+let t=document.getElementById('roomText').value.toLowerCase().trim();
+let img=document.getElementById('bgImage');
+if(!t){t="room"}
+if(t.includes("in room")||t.includes("not in room")||t.includes("like in room")||t.includes("live5")){
+ img.src=rooms["room"];
+ return;
+}
+for(let k in rooms){if(t.includes(k)){img.src=rooms[k];return;}}
+// If new text, still show room
+img.src=rooms["room"];
+}
+</script>
+</body>
+</html>
