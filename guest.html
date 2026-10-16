@@ -1,0 +1,40 @@
+<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>GUEST - GOLDEN 64BIT</title>
+<style>*{margin:0;padding:0;box-sizing:border-box}body{background:#080500;color:#ffdf80;font-family:Arial;min-height:100vh;display:flex;flex-direction:column}
+.top{padding:14px;background:linear-gradient(90deg,#1a0f00,#b38600,#ffcc00,#ffdf88,#ffcc00,#b38600,#1a0f00);border-bottom:4px solid #ffcc00;display:flex;justify-content:space-between;align-items:center}
+.badge{background:#000;color:#ffcc00;padding:8px 14px;border-radius:16px;border:3px solid #ffcc00;font-weight:900;font-size:11px;text-align:center}
+.micWrap{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px}
+.micCircle{width:220px;height:220px;background:radial-gradient(#ffef99,#ffcc00,#b38600,#3d2a00);border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;border:6px solid #ffef99;box-shadow:0 0 40px #ffcc00}
+.btnGold{margin:12px;width:90%;max-width:400px;padding:22px;background:linear-gradient(#ffef99,#ffcc00,#b38600);border:4px solid #ffef99;border-radius:30px;color:#000;font-weight:900;font-size:18px;cursor:pointer;box-shadow:0 0 30px #ffcc00}
+.btnGold.live{background:linear-gradient(#ff3b3b,#990000);color:#fff;border-color:#ffaaaa;box-shadow:0 0 30px red}
+</style></head><body>
+<div class="top"><div><b>🎙️ GUEST MIC</b><br><small style="color:#000;font-weight:900">GOLDEN 64-BIT</small></div><div class="badge">64-BIT<br>GUEST GOLD</div></div>
+<div class="micWrap">
+<div class="micCircle"><div style="font-size:80px">🎙️</div><div style="color:#000;font-weight:900;font-size:12px">RODE PRO 64BIT</div></div>
+<div id="statusTxt" style="font-size:14px;font-weight:900;color:#ffcc00;margin:14px 0;text-align:center">READY TO JOIN - GOLDEN 64BIT</div>
+<div style="background:linear-gradient(#ffef99,#ffcc00);color:#000;padding:8px 16px;border-radius:20px;font-weight:900;font-size:12px;border:2px solid #fff;margin:10px">⚡ 64-BIT • 1546dB HEADROOM</div>
+<button class="btnGold" id="btnAir" onclick="requestAir()">🚀 PUT ME TO AIR - 64BIT</button>
+<button style="margin-top:10px;background:#111;border:2px solid #ffcc00;border-radius:12px;padding:10px 20px;color:#ffcc00;font-weight:900;cursor:pointer" onclick="location.href='index.html'">← BACK TO STUDIO</button>
+</div>
+<script>
+let onAir=false;
+function requestAir(){
+let btn=document.getElementById('btnAir');let txt=document.getElementById('statusTxt');
+if(!onAir){
+localStorage.setItem('sirdio_guest_want_air','1');localStorage.setItem('sirdio_guest_name','GUEST-GOLDEN');
+navigator.mediaDevices.getUserMedia({audio:{sampleRate:192000,echoCancellation:false,autoGainControl:false,noiseSuppression:false}}).then(s=>{
+txt.innerHTML='● REQUESTING... STUDIO BLINKING RED! 🔴';btn.textContent='⏳ WAITING FOR ALLOW...';setTimeout(checkAllow,1000);
+}).catch(e=>{alert(e.message)});
+onAir=true;
+}else{
+localStorage.removeItem('sirdio_guest_want_air');localStorage.removeItem('sirdio_guest_allowed');
+txt.innerHTML='READY TO JOIN - GOLDEN 64BIT';btn.className='btnGold';btn.textContent='🚀 PUT ME TO AIR - 64BIT';onAir=false;
+}
+}
+function checkAllow(){
+let allowed=localStorage.getItem('sirdio_guest_allowed');
+let txt=document.getElementById('statusTxt');let btn=document.getElementById('btnAir');
+if(allowed==='yes'){
+txt.innerHTML='🟢 YOU ARE LIVE ON AIR! 64-BIT GOLDEN! 🔥';btn.className='btnGold live';btn.textContent='🔴 LIVE ON AIR - TAP TO LEAVE';
+}else{setTimeout(checkAllow,1000);}
+}
+</script></body></html>
