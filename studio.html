@@ -1,0 +1,43 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PLAY-DAT STUDIO</title><script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
+<style>body{background:#111;color:#fff;font-family:sans-serif;text-align:center;padding:10px}button{padding:14px;margin:5px;border-radius:10px;border:0;font-weight:900}video{width:100%;max-width:500px;border:3px solid red;border-radius:12px;background:#000}iframe{width:100%;height:280px;border:3px solid #facc15;border-radius:12px}</style></head><body>
+<h1>🎧 PLAY-DAT STUDIO LIVE</h1><h3 id="status">⚪ OFFLINE</h3>
+<video id="myCam" autoplay muted playsinline></video><br>
+<button style="background:red;color:#fff;font-size:18px" onclick="goLive()">🔴 GO LIVE</button>
+<button style="background:#00ff00;color:#000;padding:20px;width:95%;font-size:20px" onclick="forceVoice()">🎤 VOICE MODE - TAP TO TALK</button><br>
+<p id="voiceStatus">MIC OFF</p>
+<h2>📺 DECK A - YOUTUBE</h2><input id="ytid" value="dQw4w9WgXcQ" style="width:70%;padding:10px"><button onclick="loadYT()">LOAD</button><br>
+<iframe id="yt" src="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1&mute=0"></iframe>
+<h2>🎵 DECK B - ALHA-01.mp3</h2>
+<audio id="player" controls style="width:100%" src="ALHA-01.mp3" crossorigin="anonymous"></audio><br>
+<button style="background:#facc15" onclick="playMP3()">▶ PLAY MP3 TO LISTENER</button>
+<button style="background:#facc15" onclick="document.getElementById('player').pause()">⏸ PAUSE</button>
+<p>MP3 Status: <b id="mp3status">NOT PLAYING YET</b></p>
+<p>👥 Listeners: <b id="count">0</b></p>
+<script>
+let peer,audioCtx,dest,player=document.getElementById('player'),micStream,camStream;
+async function goLive(){
+ document.getElementById('status').innerHTML='🔴 LIVE - Connecting Audio...';
+ try{camStream=await navigator.mediaDevices.getUserMedia({video:true,audio:true});document.getElementById('myCam').srcObject=camStream;micStream=camStream;}catch(e){micStream=await navigator.mediaDevices.getUserMedia({audio:true});}
+ audioCtx=new (window.AudioContext||window.webkitAudioContext)();await audioCtx.resume();
+ dest=audioCtx.createMediaStreamDestination();
+ // 1. MIC -> DEST (voice)
+ let micSrc=audioCtx.createMediaStreamSource(micStream);let micGain=audioCtx.createGain();micGain.gain.value=2;micSrc.connect(micGain);micGain.connect(dest);window.micGain=micGain;
+ // 2. MP3 -> DEST (music) - THIS IS THE FIX!
+ let playerSrc=audioCtx.createMediaElementSource(player);let pGain=audioCtx.createGain();pGain.gain.value=1;playerSrc.connect(pGain);pGain.connect(dest);pGain.connect(audioCtx.destination);window.pGain=pGain;
+ player.volume=1;player.play().then(()=>document.getElementById('mp3status').innerText='🔊 PLAYING - Sending to Listener!').catch(e=>document.getElementById('mp3status').innerText='Press PLAY MP3 button');
+ // 3. SEND AUDIO ONLY to listener - NO VIDEO TRACK - FIX!
+ peer=new Peer('PLAY-DAT-LIVE-1');
+ peer.on('open',id=>document.getElementById('status').innerHTML='🔴 LIVE - '+id+' - MP3+VOICE to Listener');
+ peer.on('call',call=>{
+   // dest.stream has MP3+VOICE mixed - pure audio
+   call.answer(dest.stream);
+   call.on('stream',()=>{});
+   let c=parseInt(document.getElementById('count').innerText)+1;document.getElementById('count').innerText=c;
+ });
+ document.getElementById('voiceStatus').innerText='🎤 VOICE ON - Talk!';
+}
+function playMP3(){player.volume=1;player.play();if(audioCtx)audioCtx.resume();document.getElementById('mp3status').innerText='🔊 PLAYING - Listener hears it!';}
+function forceVoice(){if(micStream)micStream.getAudioTracks().forEach(t=>t.enabled=true);if(window.micGain)window.micGain.gain.value=2;document.getElementById('voiceStatus').innerText='🎤 VOICE ON';}
+function loadYT(){document.getElementById('yt').src='https://www.youtube.com/embed/'+document.getElementById('ytid').value.trim()+'?autoplay=1&mute=0';}
+</script></body></html>
