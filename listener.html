@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>PLAY-DAT.             </title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#0a0a0a;color:#fff;font-family:Arial;text-align:center;padding:1.5vw}
+.top{background:#e0c36a;color:#000;padding:10px;font-weight:900;font-size:16px}
+.sub{color:#e0c36a;font-size:10px;letter-spacing:2px;margin:4px}
+.box{max-width:650px;margin:10px auto;background:#151515;border:1px solid #e0c36a;border-radius:12px;padding:12px}
+.btn{background:#e0c36a;color:#000;padding:14px 20px;border:0;border-radius:20px;font-weight:900;margin:6px;cursor:pointer;width:90%;font-size:15px}
+.btn.green{background:#00ff00;color:#000}
+.btn.active{background:#00ff00!important}
+.switchBtn{width:48%;padding:13px;font-size:14px}
+.videoWrap{position:relative;width:100%;background:#000;border-radius:8px;overflow:hidden;border:1px solid #333;height:260px}
+.videoWrap iframe{width:100%;height:260px;border:0;display:block;background:#000}
+.coverTop{position:absolute;left:0;top:0;background:#000;color:#e0c36a;padding:5px 10px;font-weight:900;font-size:11px;z-index:10;border-radius:0 0 8px 0}
+.coverYT{position:absolute;right:0;bottom:36px;background:#000;color:#e0c36a;padding:8px 16px;font-weight:900;font-size:12px;z-index:30;border-radius:8px 0 0 0}
+.voiceWrap{background:#000;border-radius:8px;padding:30px 10px;border:1px solid #333}
+audio{width:100%;margin-top:10px}
+.liveCount{background:#ff0000;color:#fff;padding:6px 16px;border-radius:20px;font-weight:900;font-size:13px;display:inline-block;margin:6px}
+.radioTitle{color:#e0c36a;font-weight:900;font-size:14px;margin:4px}
+</style>
+</head>
+<body>
+<div class="top">PLAY-DAT WORLD</div>
+<div class="sub">PLAY-DAT.        </div>
+<div><span class="liveCount">🔴 ON AIR NOW</span></div>
+
+<div class="box">
+<div class="radioTitle">📻 PLAY-</div>
+<div style="font-size:12px;color:#fff">🎧 DJ.             </div>
+<div style="font-size:11px;color:#aaa;margin:3px">
+- PLAY-DAT WORLD - Watch or Listen</div>
+</div>
+
+<!-- OPTION 1 - WATCH / LISTEN -->
+<div class="box">
+<b style="color:#e0c36a;font-size:15px">1 - WATCH / LISTEN</b><br><br>
+<button class="btn switchBtn active" id="btnVideo" onclick="showVideo()">📹 WATCH</button>
+<button class="btn switchBtn" id="btnVoice" onclick="showVoice()">🎧 LISTEN</button><br><br>
+
+<div id="videoPart">
+<div class="videoWrap">
+<div class="coverTop">PLAY-DAT ● LIVE</div>
+<iframe id="deckA" src="https://www.youtube.com/embed/dQw4w9WgXcQ?rel=0&modestbranding=1&controls=1" allow="autoplay;encrypted-media" allowfullscreen></iframe>
+<div class="coverYT">▶ PLAY-DAT</div>
+</div>
+<p style="font-size:11px;color:#aaa;margin:6px">📹 WATCH - DJ PAPA LIVE VIDEO</p>
+</div>
+
+<div id="voicePart" style="display:none">
+<div class="voiceWrap">
+<div style="font-size:60px">📻</div>
+<div style="color:#e0c36a;font-weight:900;font-size:18px">PLAY-DAT RADIO</div>
+<div style="color:#fff;font-size:12px;margin:4px">🎧 NOW PLAYING - ALHA-01</div>
+<div style="color:#0f0;font-weight:900;font-size:11px">🔴 ON AIR - DJ PAPA</div>
+<audio id="voiceAudio" controls src="ALHA-01.mp3"></audio>
+<p style="font-size:11px;color:#aaa">🎧 LISTEN - Radio Mode - Data Saving</p>
+</div>
+</div>
+
+</div>
+
+<!-- OPTION 2 - SHARE -->
+<div class="box">
+<b style="color:#e0c36a;font-size:15px">2 - SHARE PROGRAM</b><br><br>
+<button class="btn green" onclick="shareWA()">🟢 SHARE ON WHATSAPP</button>
+<button class="btn" onclick="copyLink()">🔗 COPY LINK</button>
+<p id="msg" style="color:#0f0;font-weight:900;font-size:12px"></p>
+</div>
+
+<script>
+function showVideo(){
+ document.getElementById('videoPart').style.display='block';
+ document.getElementById('voicePart').style.display='none';
+ document.getElementById('btnVideo').classList.add('active');
+ document.getElementById('btnVoice').classList.remove('active');
+ document.getElementById('voiceAudio').pause();
+}
+function showVoice(){
+ document.getElementById('videoPart').style.display='none';
+ document.getElementById('voicePart').style.display='block';
+ document.getElementById('btnVoice').classList.add('active');
+ document.getElementById('btnVideo').classList.remove('active');
+ document.getElementById('deckA').src=document.getElementById('deckA').src;
+ document.getElementById('voiceAudio').play();
+}
+function shareWA(){
+ let link='https://papacentral23-spec.github.io/PLAY-DAT/listener.html';
+ window.open('https://wa.me/?text='+encodeURIComponent('📻 PLAY-DAT RADIO PROGRAM LIVE NOW! 🔥 Watch or Listen - DJ PAPA in Kumasi - '+link));
+}
+function copyLink(){
+ let link='https://papacentral23-spec.github.io/PLAY-DAT/listener.html';
+ navigator.clipboard.writeText(link);
+ document.getElementById('msg').innerText='✅ Radio link copied! Send to friends!';
+}
+</script>
+</body>
+</html>
