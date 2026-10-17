@@ -1,0 +1,36 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PLAY-DAT STUDIO LIVE</title><script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
+<style>body{background:#111;color:#fff;font-family:sans-serif;text-align:center;padding:10px}button{padding:14px;margin:5px;border-radius:10px;border:0;font-weight:900;font-size:15px}video{width:100%;max-width:500px;border:3px solid red;border-radius:12px;background:#000}iframe{width:100%;height:280px;border:3px solid #facc15;border-radius:12px}.song{padding:9px;background:#333;margin:4px;border-radius:8px;text-align:left}.song.playing{background:#facc15;color:#000}</style></head><body>
+<h1>🎧 PLAY-DAT STUDIO LIVE</h1><h3 id="status">⚪ OFFLINE - Press GO LIVE</h3>
+<video id="myCam" autoplay muted playsinline></video><br>
+<button style="background:red;color:#fff" onclick="goLive()">🔴 GO LIVE</button>
+<button style="background:#00ff00;color:#000;padding:20px;width:95%;font-size:20px" onclick="forceVoice()">🎤🎤 VOICE MODE - TAP TO TALK - ALWAYS ON 🎤🎤</button><br>
+<p>🎤 Voice Status: <b id="voiceStatus">MIC OFF - Press VOICE MODE</b></p>
+<h2>📺 DECK A - YOUTUBE TRICK</h2>
+<input id="ytid" value="dQw4w9WgXcQ" style="width:70%;padding:10px"><button onclick="loadYT()">LOAD YOUTUBE</button><br>
+<iframe id="yt" src="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1&mute=0"></iframe>
+<h2>🎵 DECK B - MP3 NONSTOP</h2>
+<label style="background:#fff;color:#000;padding:14px;border-radius:10px;display:block">📁 CLICK - SELECT MP3 FROM PHONE<br><input type="file" accept="audio/*" multiple onchange="loadSongs(event)"></label>
+<div id="list">No songs yet</div><p id="now">Now Playing: -</p><audio id="player" controls style="width:100%"></audio><br>
+<button style="background:#facc15" onclick="nextSong()">⏭ NEXT SONG</button>
+<button style="background:#facc15" onclick="document.getElementById('player').play()">▶ PLAY</button>
+<button style="background:#facc15" onclick="document.getElementById('player').pause()">⏸ PAUSE</button>
+<p>👥 Listeners: <b id="count">0</b></p>
+<script>
+let peer,camStream,micStream,audioCtx,dest,player=document.getElementById('player');let songs=[],current=0,calls=[];
+async function goLive(){
+ document.getElementById('status').innerHTML='🔴 LIVE NOW';
+ try{camStream=await navigator.mediaDevices.getUserMedia({video:true,audio:{echoCancellation:false}});document.getElementById('myCam').srcObject=camStream;micStream=camStream;}catch(e){camStream=await navigator.mediaDevices.getUserMedia({audio:true});micStream=camStream;}
+ audioCtx=new (window.AudioContext||window.webkitAudioContext)();dest=audioCtx.createMediaStreamDestination();
+ let micSrc=audioCtx.createMediaStreamSource(micStream);let micGain=audioCtx.createGain();micGain.gain.value=2;micSrc.connect(micGain);micGain.connect(dest);window.micGain=micGain;
+ let combined=new MediaStream(); if(camStream.getVideoTracks()[0]) combined.addTrack(camStream.getVideoTracks()[0]); if(dest.stream.getAudioTracks()[0]) combined.addTrack(dest.stream.getAudioTracks()[0]);
+ peer=new Peer('PLAY-DAT-LIVE-1');peer.on('open',id=>document.getElementById('status').innerHTML='🔴 LIVE - '+id);
+ peer.on('call',call=>{call.answer(combined);calls.push(call);document.getElementById('count').innerText=calls.length;});
+ document.getElementById('voiceStatus').innerText='🎤 VOICE ON - Talk now!';
+}
+function forceVoice(){ if(micStream) micStream.getAudioTracks().forEach(t=>t.enabled=true); if(window.micGain) window.micGain.gain.value=2; document.getElementById('voiceStatus').innerText='🎤🎤 VOICE MODE ON - TALK NOW - Listeners hear you!'; alert('VOICE MODE ON!'); }
+function loadYT(){document.getElementById('yt').src='https://www.youtube.com/embed/'+document.getElementById('ytid').value.trim()+'?autoplay=1&mute=0';}
+function loadSongs(e){songs=Array.from(e.target.files);let h='';songs.forEach((f,i)=>h+=`<div class="song" id="s${i}" onclick="playSong(${i})">${i+1}. ${f.name}</div>`);document.getElementById('list').innerHTML=h;if(songs.length)playSong(0);}
+function playSong(i){current=i;player.src=URL.createObjectURL(songs[i]);player.play();document.getElementById('now').innerText='Now Playing: '+songs[i].name;document.querySelectorAll('.song').forEach(el=>el.classList.remove('playing'));let el=document.getElementById('s'+i);if(el)el.classList.add('playing');try{if(!window.playerSrc){window.playerSrc=audioCtx.createMediaElementSource(player);window.pGain=audioCtx.createGain();window.playerSrc.connect(window.pGain);window.pGain.connect(dest);window.pGain.connect(audioCtx.destination);}}catch(e){}player.onended=()=>nextSong();}
+function nextSong(){if(!songs.length)return;current=(current+1)%songs.length;playSong(current);}
+</script></body></html>
