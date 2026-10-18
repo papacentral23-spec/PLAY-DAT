@@ -1,0 +1,28 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PLAY-DAT LIVE</title><script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
+<style>body{background:#000;color:#fff;font-family:sans-serif;text-align:center;padding:10px}button{padding:18px;border-radius:15px;border:0;font-weight:900;width:95%}iframe{width:100%;height:280px;border:3px solid #facc15;border-radius:15px}#videoBox{display:none}</style></head><body>
+<h1>🔴 PLAY-DAT • LIVE</h1><p id="status">STUDIO MUST BE LIVE FIRST! Then press JOIN</p>
+<button style="background:red;color:#fff;font-size:20px" onclick="join()">▶ JOIN LIVE NOW</button><br><br>
+<button style="background:yellow;color:#000;font-size:22px;padding:20px" onclick="unmute()">🔊 UNMUTE VOICE - TAP HERE</button><br><br>
+<h2>🎤 NOW HEARING: DJ VOICE + MP3 FROM PHONE</h2>
+<audio id="liveAudio" autoplay playsinline controls style="width:100%"></audio><video id="hiddenVideo" autoplay playsinline muted style="display:none"></video>
+<p id="soundStatus">🔇 No sound yet - Press JOIN - If still no sound, press JOIN again</p><br>
+<button style="background:#fff;color:#000;font-size:18px" onclick="switchVideo()">📺 SWITCH TO VIDEO - ARM BALL</button><br><br>
+<div id="videoBox"><h3>📺 ARM BALL - id7JOjDMmEI</h3><iframe id="yt" src="https://www.youtube.com/embed/id7JOjDMmEI?autoplay=1&mute=0"></iframe><br><button style="background:#facc15" onclick="switchAudio()">🎤 BACK TO VOICE ONLY</button></div>
+<script>
+let tries=0;
+function unmute(){let a=document.getElementById('liveAudio');a.muted=false;a.volume=1;a.play();alert('UNMUTED - Volume 100%');}
+function switchVideo(){document.getElementById('videoBox').style.display='block';}
+function switchAudio(){document.getElementById('videoBox').style.display='none';}
+function join(){
+ tries++;document.getElementById('status').innerText='Trying '+tries+' - Connecting to PLAY-DAT-LIVE-1... Make sure STUDIO is LIVE!';
+ let peer=new Peer();
+ peer.on('open',()=>{
+  document.getElementById('status').innerText='Peer Open - Calling Studio...';
+  let call=peer.call('PLAY-DAT-LIVE-1',new MediaStream());
+  call.on('stream',s=>{document.getElementById('status').innerText='🔴 LIVE - CONNECTED! You hear DJ NOW!';let a=document.getElementById('liveAudio');a.srcObject=s;a.muted=false;a.volume=1;a.play();document.getElementById('hiddenVideo').srcObject=s;document.getElementById('soundStatus').innerText='🔊 SOUND ON - MP3 + VOICE!';});
+  call.on('error',e=>{document.getElementById('status').innerText='❌ ERROR: Studio NOT LIVE - Go to Studio and press GO LIVE first! Error:'+e;});
+ });
+ peer.on('error',e=>{document.getElementById('status').innerText='❌ Peer Error: '+e.type+' - Studio not found - Press JOIN again after Studio GO LIVE';});
+}
+</script></body></html>
