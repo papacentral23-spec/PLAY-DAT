@@ -1,0 +1,40 @@
+<!DOCTYPE html><html><head><meta name="viewport" content="width=device-width,initial-scale=1"><title>PLAY-DAT STUDIO</title><script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script><style>body{background:#111;color:#fff;font-family:Arial;text-align:center;padding:10px}button{padding:15px 25px;font-size:18px;border-radius:10px;border:0;margin:8px;font-weight:bold}.live{background:red;color:#fff}.play{background:#0f0;color:#000}input{padding:10px;width:80%}iframe{width:100%;height:240px;border:0;border-radius:12px}audio{width:100%}</style></head><body>
+<h1>🎧 PLAY-DAT STUDIO</h1>
+<p id="s">⚪ OFFLINE - Ready</p><p>👥 <span id="c">0</span> Listeners</p>
+<input id="yt" value="id7JOjDMmEI" placeholder="YouTube ID"><br>
+<button onclick="loadYT()">📺 LOAD VIDEO</button><br>
+<div id="ytbox"><iframe id="ytf" src="https://www.youtube.com/embed/id7JOjDMmEI?autoplay=1&mute=1" allow="autoplay"></iframe></div>
+<p>🎵 MP3 FROM PHONE</p>
+<input type="file" id="f" accept="audio/*"><br>
+<audio id="aud" controls></audio>
+<p id="m">No MP3 yet - Choose ALHA-01.mp3</p>
+<br><button class="live" onclick="goLive()">🔴 GO LIVE - VIDEO + VOICE + MP3 ALWAYS</button>
+<br><button class="play" onclick="playAll()">▶ PLAY ALL NOW</button>
+<script>
+let peer, stream, mp3URL;
+document.getElementById('f').addEventListener('change',e=>{
+let file=e.target.files[0]; if(!file)return; mp3URL=URL.createObjectURL(file);
+let a=document.getElementById('aud'); a.src=mp3URL; a.load();
+document.getElementById('m').innerText='✅ '+file.name+' - READY - Will play on GO LIVE';
+});
+function loadYT(){let id=document.getElementById('yt').value.trim(); document.getElementById('ytf').src='https://www.youtube.com/embed/'+id+'?autoplay=1&mute=1';}
+async function goLive(){
+document.getElementById('s').innerText='🔴 LIVE - PLAY-DAT-LIVE-1 - Starting...';
+try{ stream=await navigator.mediaDevices.getUserMedia({audio:true,video:false});
+}catch(e){ stream=null; alert('Allow Mic for voice'); }
+peer=new Peer('PLAY-DAT-LIVE-1');
+peer.on('open',()=>{ document.getElementById('s').innerText='🔴 LIVE - PLAY-DAT-LIVE-1 - VIDEO + VOICE + MP3 ALWAYS'; playAll(); });
+peer.on('connection',c=>{ updateCount(); });
+peer.on('call',call=>{ call.answer(stream); updateCount(); setTimeout(updateCount,500); });
+function updateCount(){ setTimeout(()=>{ document.getElementById('c').innerText=(peer.connections?Object.keys(peer.connections).length:0); },500); }
+}
+function playAll(){
+// video unmute trick - reload with sound
+let id=document.getElementById('yt').value.trim();
+document.getElementById('ytf').src='https://www.youtube.com/embed/'+id+'?autoplay=1&mute=0';
+// mp3 play
+let a=document.getElementById('aud'); if(a.src){ a.play().catch(()=>{}); a.volume=1; }
+// voice is already via PeerJS stream
+document.getElementById('s').innerText='🔴 LIVE - PLAY-DAT-LIVE-1 - 🔊 PLAYING VIDEO + MP3 + VOICE';
+}
+</script></body></html>
