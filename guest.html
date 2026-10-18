@@ -1,0 +1,21 @@
+<!DOCTYPE html><html><head><meta name="viewport" content="width=device-width,initial-scale=1"><title>PLAY-DAT GUEST</title><script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script><style>body{background:#1a1a1a;color:#fff;font-family:Arial;margin:0}.top{background:linear-gradient(90deg,#C9A227,#FFD700,#C9A227);color:#111;padding:14px;font-weight:900;font-size:22px;text-align:center}.sub{background:#2e2e2e;color:#FFD700;padding:6px;font-size:11px;letter-spacing:2px;text-align:center}.box{background:#2e2e2e;border:1.5px solid #FFD700;margin:12px;border-radius:14px;padding:12px}.deck{color:#FFD700;font-size:19px;font-weight:800;text-align:center}input{background:#fff;color:#111;padding:12px;width:75%;text-align:center;border-radius:10px;border:0;font-weight:bold}button{background:#FFD700;color:#111;padding:12px 25px;border-radius:25px;border:0;font-weight:900;font-size:16px;margin:6px}button.guest{background:#d32f2f;color:#fff;padding:16px;font-size:17px;width:92%}button.off{background:#808080;color:#fff}iframe{width:100%;height:250px;border:0;border-radius:10px}audio{width:100%}.livebar{background:#FFD700;color:#111;padding:9px;font-weight:900;margin-top:8px;border-radius:6px;text-align:center}.switchbox{background:#1a1a1a;border:1px solid #FFD700;border-radius:10px;padding:10px;margin:10px 0;text-align:center}.grey{color:#b0b0b0;font-size:13px}</style></head><body>
+<div class="top">PLAY-DAT WORLD</div><div class="sub"> GUEST - TALK TO STUDIO - VOICE / VIDEO</div>
+<div class="switchbox"><p style="color:#FFD700;font-weight:900">🎛️ SWITCH - VOICE / VIDEO</p><button id="vBtn" onclick="toggleVoice()">🎤 VOICE: ON</button><button id="vdBtn" onclick="toggleVideo()">🎬 VIDEO: ON</button><p class="grey">Press switch to turn ON / OFF</p></div>
+<div class="box" id="videoBox"><div class="deck">DECK A - </div><br><iframe id="ytf" src="https://www.youtube.com/embed/id7JOjDMmEI?autoplay=1&mute=0" allow="autoplay"></iframe><div class="livebar">▶ PLAY-DAT 🔴 LIVE</div><p class="grey">🎬 VIDEO - ARM BALL - Maztube - id7JOjDMmEI</p></div>
+<div class="box" id="voiceBox"><div class="deck">DECK B - VOICE / ALHA-01</div><p id="s" style="color:#FFD700">⚪ OFFLINE - Ready</p><p class="grey">👤 Your Name:</p><input id="gname" value="GUEST-1" placeholder="Your Name"><br><br><p class="grey">🎧 Listen to DJ + 🎤 Talk to DJ - BOTH!</p><audio id="aud" controls autoplay></audio><p id="mic" style="color:#FFD700">Mic: Not yet - Press JOIN GUEST</p><button class="guest" onclick="joinGuest()">🎤 JOIN AS GUEST - TALK LIVE</button></div>
+<script>
+let peer, voiceOn=true, videoOn=true, myStream;
+function toggleVoice(){voiceOn=!voiceOn;document.getElementById('vBtn').innerText=voiceOn?'🎤 VOICE: ON':'🎤 VOICE: OFF';document.getElementById('vBtn').className=voiceOn?'':'off';document.getElementById('voiceBox').style.display=voiceOn?'block':'none';}
+function toggleVideo(){videoOn=!videoOn;document.getElementById('vdBtn').innerText=videoOn?'🎬 VIDEO: ON':'🎬 VIDEO: OFF';document.getElementById('vdBtn').className=videoOn?'':'off';document.getElementById('videoBox').style.display=videoOn?'block':'none';}
+async function joinGuest(){
+let name=document.getElementById('gname').value||'GUEST-1';
+document.getElementById('s').innerText='Trying - '+name+' - Connecting to DJ...';
+try{myStream=await navigator.mediaDevices.getUserMedia({audio:true,video:false});document.getElementById('mic').innerText='✅ Mic: ALLOWED - '+name+' can talk!';}catch(e){document.getElementById('mic').innerText='❌ Mic BLOCKED - Allow Mic';alert('ALLOW MIC');return;}
+peer=new Peer('PLAY-DAT-GUEST-'+name);
+peer.on('open',()=>{
+let call=peer.call('PLAY-DAT-LIVE-1', myStream);
+if(call){call.on('stream',s=>{let a=document.getElementById('aud');a.srcObject=s;a.play().catch(()=>{});document.getElementById('s').innerText='🔴 LIVE - '+name+' CONNECTED! 🎤 Talk now - DJ hears you!';});}
+setTimeout(()=>{if(document.getElementById('s').innerText.includes('Trying'))document.getElementById('s').innerText='❌ ERROR: Studio NOT LIVE - GO LIVE FIRST';},8000);
+});
+}
+</script></body></html>
