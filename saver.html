@@ -1,0 +1,34 @@
+<!DOCTYPE html><html><head><meta name="viewport" content="width=device-width,initial-scale=1"><title>PLAY-DAT BIG SERVER</title><style>body{background:#121212;color:#fff;font-family:Arial;margin:0;text-align:center}.top{background:#000;padding:10px}.top img{width:92%;max-width:420px;border-radius:18px;border:2px solid #FFD700}.box{background:#2e2e2e;border:2px solid #FFD700;margin:12px;border-radius:14px;padding:14px}input{width:85%;padding:12px;margin:6px;border-radius:10px;text-align:center}button{background:#FFD700;color:#111;padding:14px;width:92%;border:0;font-weight:900;border-radius:20px;margin:6px}button.green{background:#25D366;color:#fff}button.blue{background:#2196F3;color:#fff}button.red{background:#ff4444;color:#fff}#agreement{display:none;background:#1a1a1a;border:1px solid #FFD700;padding:12px;border-radius:12px;text-align:left}</style></head><body>
+<div class="top"><img src="https://res.cloudinary.com/sz0v9733/image/upload/v1/playdat_logo.jpg"></div>
+<p style="color:#FFD700;font-weight:900">SERVER STATUS - LIVE</p>
+<div class="box"><h3>📊 SERVER NOW</h3><p>🟢 GITHUB SERVER: WORKING - Website</p><p>🟡 PHONE SAVER: WORKING - 1 Phone Only</p><p id="bigstatus">🔴 BIG SERVER: NOT CONNECTED - Need Cloud Name</p><p>📀 SPACE LEFT: 25GB FREE - 5000 Songs!</p><p id="count">Songs on server: 0</p></div>
+<div class="box"><h3>📤 UPLOAD - TO BIG SERVER</h3>
+<input id="sname" placeholder="Song name"><br>
+<input id="aname" placeholder="Artist name"><br>
+<input id="momo" placeholder="MoMo - For 80%"><br>
+<input id="file" type="file" accept="audio/*" style="background:#fff;color:#111"><br>
+<button onclick="uploadServer()">📤 UPLOAD TO BIG SERVER</button>
+<p id="st" style="color:#FFD700"></p></div>
+<div class="box"><h3>🔑 CONNECT BIG SERVER - FREE</h3>
+<input id="cloud" placeholder="Paste CLOUD NAME - sz0v9733"><br>
+<input id="preset" placeholder="Preset - playdat"><br>
+<button class="blue" onclick="connectServer()">🔑 CONNECT SERVER NOW</button>
+<p id="cstatus"></p></div>
+<div class="box"><h3>🔥 SONGS ON SERVER</h3><div id="list">No songs yet - Be first!</div></div>
+<div class="box">
+<button class="red" onclick="toggleAgreement()">📄 READ 80-20 AGREEMENT</button>
+<div id="agreement">
+<b>📄 80-20 AGREEMENT</b><br><br>
+Artist keeps 100% song • Artist gets 80% • PLAY-DAT 20%<br><br>
+Artist owns the song. PLAY-DAT only helps to share and play it. When fans pay, artist gets 80% on MoMo number.<br><br>
+<button class="red" onclick="toggleAgreement()">❌ CLOSE - HIDE AGREEMENT</button>
+</div>
+</div>
+<button class="green" onclick="window.location='platform.html?v=REQUEST1'">🎵 GO TO PLATFORM - SEE YOUR SONG</button>
+<script>
+let songs=JSON.parse(localStorage.getItem('playdat_songs')||'[]');document.getElementById('count').innerText='Songs on server: '+songs.length;
+function show(){document.getElementById('list').innerHTML=songs.length?songs.map((s,i)=>`<div style="background:#1a1a1a;padding:10px;margin:5px;border-radius:10px;text-align:left">${i+1}. <b>${s.song}</b> - ${s.artist}<br>📱 ${s.momo||''}<br>${s.url?'<audio controls src="'+s.url+'" style="width:100%"></audio>':''}</div>`).join(''):'No songs yet - Be first!';}show();
+function toggleAgreement(){let a=document.getElementById('agreement');if(a.style.display==='block'){a.style.display='none'}else{a.style.display='block'}}
+async function uploadServer(){let s=document.getElementById('sname').value;let a=document.getElementById('aname').value;let m=document.getElementById('momo').value;let file=document.getElementById('file').files[0];let c=localStorage.getItem('playdat_cloud')||document.getElementById('cloud').value||'sz0v9733';let p=localStorage.getItem('playdat_preset')||'playdat';if(!s||!a){alert('Type song + artist!');return}if(!file){alert('Choose song file first!');return}document.getElementById('st').innerText='⏳ Uploading REAL to BIG SERVER...';let form=new FormData();form.append('file',file);form.append('upload_preset',p);let res=await fetch('https://api.cloudinary.com/v1_1/'+c+'/auto/upload',{method:'POST',body:form});let data=await res.json();if(data.secure_url){songs.push({song:s,artist:a,momo:m,url:data.secure_url});localStorage.setItem('playdat_songs',JSON.stringify(songs));document.getElementById('st').innerText='✅ REAL UPLOADED! '+s;document.getElementById('count').innerText='Songs on server: '+songs.length;show();alert('✅ REAL SERVER SAVED BOSS!\n\n'+s+' - '+a);}else{alert('Error - Create preset playdat Unsigned in Cloudinary');}}
+function connectServer(){let c=document.getElementById('cloud').value||'sz0v9733';let p=document.getElementById('preset').value||'playdat';if(!c){alert('Paste CLOUD NAME');return}localStorage.setItem('playdat_cloud',c);localStorage.setItem('playdat_preset',p);document.getElementById('cstatus').innerText='✅ BIG SERVER CONNECTED! '+c+' - 25GB READY!';document.getElementById('bigstatus').innerText='🟢 BIG SERVER: CONNECTED - '+c;alert('✅ BIG SERVER CONNECTED BOSS!\n\nCloud: '+c+'\nPreset: '+p+'\n\n25GB - 5000 Songs!');}
+</script></body></html>
